@@ -164,18 +164,21 @@ import * as fs from "node:fs";
   await saveContent(prontoPage, latestContent, "latest");
 
   // extract out all of the pronto numbers and magento order number, and put into an array of objects.
-  const tbody = await prontoPage.$$eval("tbody > tr", (tr) => {
+  const orderDetails = await prontoPage.$$eval("tbody > tr", (tr) => {
     const rowReturn = tr.map((row) => {
-      const array = row.querySelectorAll("td");
-      console.log(array);
-      return row.innerText;
-      // const dataArray = Array.from(row.querySelector("td"));
-      //return dataArray; */
+      return {
+        magentoOrder: row.querySelectorAll("td")[2].innerText,
+        prontoReceipt: row.querySelectorAll("td")[1].innerText,
+      };
     });
 
     return rowReturn;
   });
+  console.log("final", orderDetails);
 
-  console.log("final", tbody);
+  orderDetails.map((order) => {
+    console.log(order.prontoReceipt);
+  });
+
   await browser.close();
 })();
