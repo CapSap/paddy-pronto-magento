@@ -167,6 +167,7 @@ import * as fs from "node:fs";
   const orderDetails = await prontoPage.$$eval("tbody > tr", (tr) => {
     const rowReturn = tr.map((row) => {
       return {
+        // when the results first come through, the screen is small and only what is visible to the eye is in the DOM. to see more orders we'd need to scroll
         magentoOrder: row.querySelectorAll("td")[2].innerText,
         prontoReceipt: row.querySelectorAll("td")[1].innerText,
       };
