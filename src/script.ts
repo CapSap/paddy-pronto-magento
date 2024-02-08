@@ -159,9 +159,9 @@ import * as fs from "node:fs";
 
   // then give results to user
 
-  // save page snapshot as latest
-  const latestContent = await prontoPage.content();
-  await saveContent(prontoPage, latestContent, "latest");
+  // save page snapshot as status30
+  const status30 = await prontoPage.content();
+  await saveContent(prontoPage, status30, "status30");
 
   // extract out all of the pronto numbers and magento order number, and put into an array of objects.
   const orderDetails = await prontoPage.$$eval("tbody > tr", (tr) => {
@@ -175,11 +175,34 @@ import * as fs from "node:fs";
 
     return rowReturn;
   });
-  console.log("final", orderDetails);
 
-  orderDetails.map((order) => {
-    console.log(order.prontoReceipt);
-  });
+  // okay so we got the data! whats next?
+  // sell in pronto.
+  // select the row (click on the cell?)
+
+  const firstOrder = orderDetails[0];
+  type order = {
+    magentoOrder: string;
+    prontoReceipt: string;
+  };
+  async function sellSingleOrder(order: order) {
+    console.log("pronto sell attempt for", order);
+    const row = await prontoPage.waitForSelector(
+      `::-p-text("${order.magentoOrder}")`,
+    );
+    console.log("row", row);
+    await row?.click();
+    const headerButton = 'button[title="View this order in full"]';
+    await prontoPage.waitForSelector(headerButton);
+    await prontoPage.click(headerButton);
+
+    return {};
+  }
+
+  await sellSingleOrder(firstOrder);
+
+  const latestContent = await prontoPage.content();
+  await saveContent(prontoPage, latestContent, "last");
 
   await browser.close();
 })();
