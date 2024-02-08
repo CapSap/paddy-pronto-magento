@@ -22,3 +22,11 @@
 5. get a result value and provide to user (pronto successful or not)
 6. do nessessary magento steps
 7. done
+
+
+## How to install and run
+1. pull the repo
+2. npm install
+3. run `npm run dev` (this will run the tsc on all files in src)
+4. run the .js file inside the build folder (you will need relevant credentials in .env)
+
