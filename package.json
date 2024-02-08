@@ -1,0 +1,26 @@
+{
+  "name": "paddy-pronto-mag-script",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc --watch --preserveWatchOutput"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "authenticator": "^1.1.5",
+    "dotenv": "^16.4.1",
+    "puppeteer": "^21.10.0"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/authenticator": "^1.1.4",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
+  }
+}
