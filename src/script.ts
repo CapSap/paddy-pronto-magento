@@ -152,13 +152,6 @@ import * as fs from "node:fs";
 
   await prontoPage.waitForSelector("td.data-tbody");
 
-  // for every pronto receipt number, sell in pronto and then add a string status to the array
-  // sold successfully or not
-
-  // then deposit number into magento comment
-
-  // then give results to user
-
   // save page snapshot as status30
   const status30 = await prontoPage.content();
   await saveContent(prontoPage, status30, "status30");
