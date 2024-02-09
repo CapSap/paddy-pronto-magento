@@ -60,7 +60,7 @@ import * as fs from "node:fs";
   async function loginIntoPronto() {
     // nav to pronto login screen and enter relevant deets
     await prontoPage.goto("https://pronto.paddypallin.com.au/");
-    // sometimes page shows the verification page and the login fails. how come?
+    // sometimes page shows the verification page and the login fails. how come? or what should i do instead?
     const contentJustAfterLoad = await prontoPage.content();
     await saveContent(
       prontoPage,
@@ -165,17 +165,25 @@ import * as fs from "node:fs";
 
   // extract out all of the pronto numbers and magento order number, and put into an array of objects.
   const orderDetails = await prontoPage.$$eval("tbody > tr", (tr) => {
-    const rowReturn = tr.map((row) => {
-      return {
-        // when the results first come through, the screen is small and only what is visible to the eye is in the DOM. to see more orders we'd need to scroll
-        magentoOrder: row.querySelectorAll("td")[2].innerText,
-        prontoReceipt: row.querySelectorAll("td")[1].innerText,
-      };
-    });
+    const rowReturn = tr.reduce((acc, curr) => {
+      if (curr.querySelectorAll("td")[2].innerText === "") {
+        return acc;
+      } else {
+        return [
+          ...acc,
+          {
+            // when the results first come through, the screen is small and only what is visible to the eye is in the DOM. to see more orders we'd need to scroll
+            magentoOrder: curr.querySelectorAll("td")[2].innerText,
+            prontoReceipt: curr.querySelectorAll("td")[1].innerText,
+          },
+        ];
+      }
+    }, [] as object[]);
 
     return rowReturn;
   });
 
+  console.log("this arrray should have no empties", orderDetails);
   // okay so we got the data! whats next?
   // sell in pronto.
   // select the row (click on the cell?)
@@ -187,14 +195,51 @@ import * as fs from "node:fs";
   };
   async function sellSingleOrder(order: order) {
     console.log("pronto sell attempt for", order);
+    /*
+    // can i select the parent with child element mag order?
     const row = await prontoPage.waitForSelector(
+      `tr ::p-text("${order.magentoOrder}")`,
+    );
+    console.log(row?.toString());
+*/
+    // select td with correct mag order number
+    const magOrder = await prontoPage.waitForSelector(
       `::-p-text("${order.magentoOrder}")`,
     );
-    console.log("row", row);
-    await row?.click();
-    const headerButton = 'button[title="View this order in full"]';
-    await prontoPage.waitForSelector(headerButton);
+    if (!magOrder) {
+      throw Error("could not find order");
+    }
+    console.log("row", magOrder);
+    await magOrder.click();
+    await prontoPage.keyboard.press("h");
+    await prontoPage.keyboard.press("u");
+    await prontoPage.keyboard.press("7");
+    await prontoPage.keyboard.press("0");
+
+    // const selectedRow = await prontoPage.waitForSelector(".selected");
+    // console.log(await selectedRow?.$(`::-p-text("${order.magentoOrder}")`));
+    // wait 1 min to check if the click / selecting is working. is there a better way to wait / check?
+    // wait for row to contain class selected!
+    // await prontoPage.waitForSelector(".selected", { timeout: 60000 });
+    await new Promise((r) => setTimeout(r, 60000));
+
+    // const headerButton = "button[title='View this order in full']";
+    // await prontoPage.waitForSelector(headerButton, { visible: true });
+    return {};
+    console.log("trying to click header");
     await prontoPage.click(headerButton);
+    await prontoPage.waitForSelector("div.control-container > div");
+
+    await prontoPage.waitForSelector(
+      "button[title='Change the current order status']",
+    );
+    await prontoPage.click("button[title='Change the current order status']");
+    await prontoPage.waitForSelector("label[title='Enter Desired Status']");
+    await prontoPage.waitForSelector(
+      "input[title='Please enter one of the above status']",
+    );
+
+    await prontoPage.keyboard.type("70");
 
     return {};
   }
