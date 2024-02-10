@@ -229,11 +229,6 @@ import * as fs from "node:fs";
     const doubleCheck = await prontoPage.content();
     await saveContent(prontoPage, doubleCheck, "doubleCheck");
 
-    // const selectedRow = await prontoPage.waitForSelector(".selected");
-    // console.log(await selectedRow?.$(`::-p-text("${order.magentoOrder}")`));
-    // wait 1 min to check if the click / selecting is working. is there a better way to wait / check?
-    // wait for row to contain class selected!
-    // await prontoPage.waitForSelector(".selected", { timeout: 60000 });
     await new Promise((r) => setTimeout(r, 60000));
 
     // const headerButton = "button[title='View this order in full']";
