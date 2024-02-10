@@ -15,6 +15,10 @@ import * as fs from "node:fs";
   await magentoPage.goto(
     `https://www.paddypallin.com.au/agpallin_20/admin/dashboard/index/key/${process.env.MAG_KEY}`,
   );
+  // enable loggin on prontoPage
+  prontoPage.on("console", (message) => {
+    console.log(`Message: ${message.text()}`);
+  });
 
   // function to save content html
   async function saveContent(page: Page, content: string, filename: string) {
@@ -157,6 +161,7 @@ import * as fs from "node:fs";
   await saveContent(prontoPage, status30, "status30");
 
   // extract out all of the pronto numbers and magento order number, and put into an array of objects.
+  type orderDetails = { magentoOrder: string; prontoReceipt: string }[];
   const orderDetails = await prontoPage.$$eval("tbody > tr", (tr) => {
     const rowReturn = tr.reduce((acc, curr) => {
       if (curr.querySelectorAll("td")[2].innerText === "") {
@@ -171,7 +176,7 @@ import * as fs from "node:fs";
           },
         ];
       }
-    }, [] as object[]);
+    }, [] as orderDetails);
 
     return rowReturn;
   });
@@ -179,7 +184,6 @@ import * as fs from "node:fs";
   console.log("this arrray should have no empties", orderDetails);
   // okay so we got the data! whats next?
   // sell in pronto.
-  // select the row (click on the cell?)
 
   const firstOrder = orderDetails[0];
   type order = {
@@ -188,26 +192,42 @@ import * as fs from "node:fs";
   };
   async function sellSingleOrder(order: order) {
     console.log("pronto sell attempt for", order);
-    /*
-    // can i select the parent with child element mag order?
-    const row = await prontoPage.waitForSelector(
-      `tr ::p-text("${order.magentoOrder}")`,
-    );
-    console.log(row?.toString());
-*/
+
     // select td with correct mag order number
     const magOrder = await prontoPage.waitForSelector(
       `::-p-text("${order.magentoOrder}")`,
     );
     if (!magOrder) {
-      throw Error("could not find order");
+      throw new Error("could not find order");
     }
     console.log("row", magOrder);
     await magOrder.click();
     await prontoPage.keyboard.press("h");
-    await prontoPage.keyboard.press("u");
-    await prontoPage.keyboard.press("7");
-    await prontoPage.keyboard.press("0");
+
+    // Check if the order in pronto matches order in array
+    await prontoPage.waitForNetworkIdle();
+
+    // get the pronto number on the page
+
+    const receiptNoFromPronto = await prontoPage.$eval(
+      "div.screen-input  ",
+      (el) => {
+        return el.querySelector("input")?.value;
+      },
+    );
+    if (receiptNoFromPronto !== order.prontoReceipt) {
+      throw new Error(
+        `Mismatch between arguments. Trying to sell ${order.prontoReceipt} / ${order.magentoOrder} but current page is on ${receiptNoFromPronto}`,
+      );
+    }
+    console.log("test", receiptNoFromPronto);
+    // await prontoPage.keyboard.press("u");
+    // await prontoPage.keyboard.press("7");
+    // await prontoPage.keyboard.press("0");
+    // await new Promise((r) => setTimeout(r, 60000));
+
+    const doubleCheck = await prontoPage.content();
+    await saveContent(prontoPage, doubleCheck, "doubleCheck");
 
     // const selectedRow = await prontoPage.waitForSelector(".selected");
     // console.log(await selectedRow?.$(`::-p-text("${order.magentoOrder}")`));
