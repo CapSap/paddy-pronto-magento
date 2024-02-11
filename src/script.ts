@@ -62,16 +62,26 @@ import * as fs from "node:fs";
   // should i be .goto for every login attempt?
 
   async function loginIntoPronto() {
+    console.log("loginto promto starting");
+
     // nav to pronto login screen and enter relevant deets
     await prontoPage.goto("https://pronto.paddypallin.com.au/");
-    // sometimes page shows the verification page and the login fails. how come? or what should i do instead?
     const contentJustAfterLoad = await prontoPage.content();
     await saveContent(
       prontoPage,
       contentJustAfterLoad,
       "just-after-intial-page-load.png",
     );
-    await prontoPage.waitForSelector("#login-username");
+    // sometimes page shows the verification page and the login fails. not sure why
+    // below will try to find the login input element and return a rejected promise so that retry can run
+    try {
+      await prontoPage.waitForSelector("#login-username");
+    } catch {
+      console.log("could not log in");
+
+      return Promise.reject("from the promise: could not log in");
+    }
+
     await prontoPage.type(
       "#login-username",
       process.env.PRONTO_USERNAME as string,
