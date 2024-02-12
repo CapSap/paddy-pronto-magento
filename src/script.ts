@@ -49,9 +49,6 @@ import * as fs from "node:fs";
   };
   const sleep = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  // login is unreliable. not sure why.
-  // should i be .goto for every login attempt?
-
   async function loginIntoPronto() {
     console.log("loginto promto starting");
 
