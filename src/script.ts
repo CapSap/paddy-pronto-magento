@@ -12,11 +12,8 @@ import * as fs from "node:fs";
   // Set screen size
   await prontoPage.setViewport({ width: 3840, height: 2160 });
   await magentoPage.setViewport({ width: 3840, height: 2160 });
-  // Navigate to magneto
-  await magentoPage.goto(
-    `https://www.paddypallin.com.au/agpallin_20/admin/dashboard/index/key/${process.env.MAG_KEY}`,
-  );
-  // enable loggin on prontoPage
+
+  // enable console logging on prontoPage
   prontoPage.on("console", (message) => {
     console.log(`Message: ${message.text()}`);
   });
@@ -113,6 +110,10 @@ import * as fs from "node:fs";
   }
   async function loginIntoMagento() {
     console.log("login to magento starting");
+    // Navigate to magneto
+    await magentoPage.goto(
+      `https://www.paddypallin.com.au/agpallin_20/admin/dashboard/index/key/${process.env.MAG_KEY}`,
+    );
     //login into magento
     await magentoPage.waitForSelector("#username");
     await magentoPage.type(
@@ -397,7 +398,7 @@ import * as fs from "node:fs";
     const firstMagScreen = await magentoPage.content();
     await saveContent(magentoPage, firstMagScreen, "firstMageScreen");
   }
-
+  //sell an array of 1 order only and see what the results are
   const arrayOfOneOrder = [orderDetails[0]];
 
   const orderDetailsAfterProntoSelling = arrayOfOneOrder.map((order) =>
