@@ -267,10 +267,7 @@ import * as fs from "node:fs";
     // not sure if i need this waitfor net idle
     await prontoPage.waitForNetworkIdle();
     // print and email the receipt to customer
-    await prontoPage.keyboard.press("Enter");
-    await prontoPage.keyboard.press("Enter");
-    //
-    await prontoPage.keyboard.press("Enter");
+    await pressEnterManyTimes(3);
     await new Promise((r) => setTimeout(r, 60000));
     const statusCheck = await prontoPage.content();
     await saveContent(prontoPage, statusCheck, "statusCheck");
