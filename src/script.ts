@@ -132,6 +132,9 @@ import * as fs from "node:fs";
     );
     await magentoPage.click("button.action-login");
     return await magentoPage.waitForNavigation();
+
+    //TODO
+    // i need to check if login worked and return a promise. same as pronto login
   }
   // retry login 2 times with 2 second interval
   try {
