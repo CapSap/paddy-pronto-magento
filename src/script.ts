@@ -243,9 +243,7 @@ import * as fs from "node:fs";
     console.log("test", receiptNoFromPronto);
     await prontoPage.keyboard.type("u");
     await prontoPage.keyboard.type("70");
-    await prontoPage.keyboard.press("Enter");
-    await prontoPage.keyboard.press("Enter");
-    await prontoPage.keyboard.press("Enter");
+    await pressEnterManyTimes(3);
 
     // await new Promise((r) => setTimeout(r, 60000));
     // below screenshotshould show select printer screen
