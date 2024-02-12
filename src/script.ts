@@ -68,11 +68,8 @@ import * as fs from "node:fs";
     try {
       await prontoPage.waitForSelector("#login-username");
     } catch {
-      console.log("could not log in");
-
-      return Promise.reject("from the promise: could not log in");
+      return Promise.reject("from the promise: could not log into pronto");
     }
-
     await prontoPage.type(
       "#login-username",
       process.env.PRONTO_USERNAME as string,
@@ -90,12 +87,8 @@ import * as fs from "node:fs";
     await prontoPage.type("#prompts", otp);
     const prontoLoginButtonFinal = "#login-button";
     await prontoPage.waitForSelector(prontoLoginButtonFinal);
-    await prontoPage.screenshot({ path: "./screenshots/justBeforeLogin.png" });
     console.log("log in attempt running");
     await prontoPage.click(prontoLoginButtonFinal);
-    await prontoPage.screenshot({
-      path: "./screenshots/just-after-login-attempt.png",
-    });
     // return a promise based upon did login succeed and throw if login failed
     try {
       await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
