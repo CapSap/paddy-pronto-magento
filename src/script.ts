@@ -234,7 +234,7 @@ import * as fs from "node:fs";
     await prontoPage.keyboard.press("Enter");
     await prontoPage.keyboard.press("Enter");
 
-    await new Promise((r) => setTimeout(r, 60000));
+    // await new Promise((r) => setTimeout(r, 60000));
     // below screenshotshould show select printer screen
     const doubleCheck = await prontoPage.content();
     await saveContent(prontoPage, doubleCheck, "doubleCheck");
@@ -246,7 +246,7 @@ import * as fs from "node:fs";
     await externalEmail?.click();
 
     // below screenshot should show external-email selected
-    await new Promise((r) => setTimeout(r, 60000));
+    // await new Promise((r) => setTimeout(r, 60000));
     const externalEmailSelected = await prontoPage.content();
     await saveContent(
       prontoPage,
