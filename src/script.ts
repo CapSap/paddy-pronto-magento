@@ -201,8 +201,6 @@ import * as fs from "node:fs";
     prontoReceipt: string;
   };
   async function sellSingleOrder(order: order) {
-    console.log("pronto sell attempt for", order);
-
     // select td with correct mag order number
     const magOrder = await prontoPage.waitForSelector(
       `::-p-text("${order.magentoOrder}")`,
@@ -282,8 +280,16 @@ import * as fs from "node:fs";
     };
   }
 
-  const res = await sellSingleOrder(firstOrder);
-  console.log("res", res);
+  // i want to iterate through orderDetails and save a new array with the result
+  /*
+  const prontoSellResult = orderDetails.map((order) => {
+    console.log("pronto sell attempt for", order);
+    return sellSingleOrder(order);
+  });
+
+  console.log(prontoSellResult);
+*/
+
   const latestContent = await prontoPage.content();
   await saveContent(prontoPage, latestContent, "last");
 
