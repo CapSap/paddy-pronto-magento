@@ -41,6 +41,7 @@ import * as fs from "node:fs";
     }
   };
   // from https://mtsknn.fi/blog/js-retry-on-fail/
+  // function that will try to run again x number of times before throwing
   const retry = async <T>(
     fn: () => Promise<T> | T,
     { retries, retryInterval }: { retries: number; retryInterval: number },
@@ -133,10 +134,14 @@ import * as fs from "node:fs";
     return await magentoPage.waitForNavigation();
   }
   // retry login 2 times with 2 second interval
-  await Promise.all([
-    retry(loginIntoPronto, { retries: 2, retryInterval: 2000 }),
-    retry(loginIntoMagento, { retries: 2, retryInterval: 2000 }),
-  ]);
+  try {
+    await Promise.all([
+      retry(loginIntoPronto, { retries: 2, retryInterval: 2000 }),
+      retry(loginIntoMagento, { retries: 2, retryInterval: 2000 }),
+    ]);
+  } catch {
+    throw new Error("failed to login to pronto and/or magento");
+  }
 
   // checking if login worked
   console.log("did login succced?", await didLoginSucced());
