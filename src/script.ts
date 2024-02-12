@@ -210,15 +210,11 @@ import * as fs from "node:fs";
     if (!magOrder) {
       throw new Error("could not find order");
     }
-    console.log("row", magOrder);
     await magOrder.click();
     await prontoPage.keyboard.press("h");
 
-    // Check if the order in pronto matches order in array
+    // Check if the order in pronto matches order passed as argument
     await prontoPage.waitForNetworkIdle();
-
-    // get the pronto number on the page
-
     const receiptNoFromPronto = await prontoPage.$eval(
       "div.screen-input  ",
       (el) => {
@@ -230,35 +226,54 @@ import * as fs from "node:fs";
         `Mismatch between arguments. Trying to sell ${order.prontoReceipt} / ${order.magentoOrder} but current page is on ${receiptNoFromPronto}`,
       );
     }
+    // continue selling as normal
     console.log("test", receiptNoFromPronto);
-    // await prontoPage.keyboard.press("u");
-    // await prontoPage.keyboard.press("7");
-    // await prontoPage.keyboard.press("0");
-    // await new Promise((r) => setTimeout(r, 60000));
+    await prontoPage.keyboard.type("u");
+    await prontoPage.keyboard.type("70");
+    await prontoPage.keyboard.press("Enter");
+    await prontoPage.keyboard.press("Enter");
+    await prontoPage.keyboard.press("Enter");
 
+    await new Promise((r) => setTimeout(r, 60000));
+    // below screenshotshould show select printer screen
     const doubleCheck = await prontoPage.content();
     await saveContent(prontoPage, doubleCheck, "doubleCheck");
 
-    await new Promise((r) => setTimeout(r, 60000));
+    // select external-email as the printer
+    const externalEmail = await prontoPage.waitForSelector(
+      `::-p-text("external-email")`,
+    );
+    await externalEmail?.click();
 
+    // below screenshot should show external-email selected
+    await new Promise((r) => setTimeout(r, 60000));
+    const externalEmailSelected = await prontoPage.content();
+    await saveContent(
+      prontoPage,
+      externalEmailSelected,
+      "externalEmailSelected",
+    );
+    // not sure if i need this waitfor net idle
+    await prontoPage.waitForNetworkIdle();
+    // print and email the receipt to customer
+    await prontoPage.keyboard.press("Enter");
+    await prontoPage.keyboard.press("Enter");
+    //
+    await prontoPage.keyboard.press("Enter");
+    await new Promise((r) => setTimeout(r, 60000));
+    const statusCheck = await prontoPage.content();
+    await saveContent(prontoPage, statusCheck, "statusCheck");
+
+    // check header screen to make sure order was sold/updated successfully
+    try {
+      await prontoPage.waitForSelector('label[title="Ready to Update"]');
+    } catch {
+      console.log(
+        `Order ${order.magentoOrder} / ${order.prontoReceipt} failed to sell`,
+      );
+    }
     // const headerButton = "button[title='View this order in full']";
     // await prontoPage.waitForSelector(headerButton, { visible: true });
-    return {};
-    console.log("trying to click header");
-    await prontoPage.click(headerButton);
-    await prontoPage.waitForSelector("div.control-container > div");
-
-    await prontoPage.waitForSelector(
-      "button[title='Change the current order status']",
-    );
-    await prontoPage.click("button[title='Change the current order status']");
-    await prontoPage.waitForSelector("label[title='Enter Desired Status']");
-    await prontoPage.waitForSelector(
-      "input[title='Please enter one of the above status']",
-    );
-
-    await prontoPage.keyboard.type("70");
-
     return {};
   }
 
