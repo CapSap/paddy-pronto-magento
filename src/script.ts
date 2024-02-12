@@ -269,16 +269,21 @@ import * as fs from "node:fs";
       await prontoPage.waitForSelector('label[title="Ready to Update"]');
     } catch {
       console.log(
-        `Order ${order.magentoOrder} / ${order.prontoReceipt} failed to sell`,
+        `Order ${order.magentoOrder} / ${order.prontoReceipt} failed to sell order status was not set to 'ready to update'`,
       );
+      return {
+        ...order,
+        result: "failed to sell automatically. problem somewhere in pronto",
+      };
     }
-    // const headerButton = "button[title='View this order in full']";
-    // await prontoPage.waitForSelector(headerButton, { visible: true });
-    return {};
+    return {
+      ...order,
+      result: "sold successfully by node script",
+    };
   }
 
-  await sellSingleOrder(firstOrder);
-
+  const res = await sellSingleOrder(firstOrder);
+  console.log("res", res);
   const latestContent = await prontoPage.content();
   await saveContent(prontoPage, latestContent, "last");
 
