@@ -11,6 +11,7 @@ import * as fs from "node:fs";
   const prontoPage = await browser.newPage();
   // Set screen size
   await prontoPage.setViewport({ width: 3840, height: 2160 });
+  await magentoPage.setViewport({ width: 3840, height: 2160 });
   // Navigate to magneto
   await magentoPage.goto(
     `https://www.paddypallin.com.au/agpallin_20/admin/dashboard/index/key/${process.env.MAG_KEY}`,
@@ -110,8 +111,24 @@ import * as fs from "node:fs";
       "button.folder[name='Sales &Orders']",
     );
   }
+  async function loginIntoMagento() {
+    console.log("login to magento starting");
+    //login into magento
+    await magentoPage.waitForSelector("#username");
+    await magentoPage.type(
+      "input#username",
+      process.env.MAGENTO_USERNAME as string,
+    );
+    await magentoPage.type(
+      "input#login",
+      process.env.MAGENTO_PASSWORD as string,
+    );
+    await magentoPage.click("button.action-login");
+    return await magentoPage.waitForNavigation();
+  }
   // retry login 2 times with 2 second interval
   await retry(loginIntoPronto, { retries: 2, retryInterval: 2000 });
+  await retry(loginIntoMagento, { retries: 2, retryInterval: 2000 });
 
   // checking if login worked
   console.log("did login succced?", await didLoginSucced());
@@ -195,12 +212,16 @@ import * as fs from "node:fs";
   // okay so we got the data! whats next?
   // sell in pronto.
 
-  const firstOrder = orderDetails[0];
   type order = {
     magentoOrder: string;
     prontoReceipt: string;
   };
-  async function sellSingleOrder(order: order) {
+  type orderWithSellResult = {
+    magentoOrder: string;
+    prontoReceipt: string;
+    result: string;
+  };
+  async function sellSingleOrder(order: order): Promise<orderWithSellResult> {
     // select td with correct mag order number
     const magOrder = await prontoPage.waitForSelector(
       `::-p-text("${order.magentoOrder}")`,
@@ -280,8 +301,8 @@ import * as fs from "node:fs";
     };
   }
 
-  // i want to iterate through orderDetails and save a new array with the result
   /*
+  // i want to iterate through orderDetails and save a new array with the result
   const prontoSellResult = orderDetails.map((order) => {
     console.log("pronto sell attempt for", order);
     return sellSingleOrder(order);
@@ -289,6 +310,102 @@ import * as fs from "node:fs";
 
   console.log(prontoSellResult);
 */
+  async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
+    console.log(order);
+    // nav to order search page
+    await magentoPage.goto(
+      `https://www.paddypallin.com.au/agpallin_20/sales/order/index/key/${process.env.MAG_KEY}/`,
+    );
+    await magentoPage.waitForSelector(
+      "input.admin__control-text.data-grid-search-control",
+    );
+    // try to remove active filters
+    try {
+      await magentoPage.click("button.action-remove");
+    } catch {
+      console.log("no filters to remove");
+    }
+    // clear input
+    const searchInput = await magentoPage.$(
+      "input.admin__control-text.data-grid-search-control",
+    );
+    await searchInput?.evaluate((input) => (input.value = ""));
+
+    // search for order and navigate to order detail page
+    await magentoPage.type(
+      "input.admin__control-text.data-grid-search-control",
+      order.magentoOrder,
+    );
+    await magentoPage.keyboard.press("Enter");
+    await magentoPage.waitForSelector("tr.data-row");
+    await magentoPage.waitForSelector("a.action-menu-item");
+
+    const newUrl = await magentoPage.$eval("a.action-menu-item", (el) =>
+      el.getAttribute("href"),
+    );
+    if (!newUrl) {
+      throw new Error("could not get URL from mag order");
+    }
+    // its naving to the wrong page. why?
+    // oh because maybe the old result was still on the page? and we haven't navigated away yet?
+    // checking terminal logs..
+    // yeah we did go to a page a while back.
+
+    await magentoPage.goto(newUrl);
+
+    const checkingIfWereontherightPage = await magentoPage.content();
+    await saveContent(magentoPage, checkingIfWereontherightPage, "check");
+
+    // then i should do a check to see if comment was put in successfully.
+    const magOrderNumberFromPage = await magentoPage.$eval(
+      "h1.page-title",
+      (el) => {
+        return el.innerText.replace("#", "");
+      },
+    );
+    console.log(
+      "number from page and order being sold",
+      magOrderNumberFromPage,
+      order.magentoOrder,
+    );
+    if (magOrderNumberFromPage !== order.magentoOrder) {
+      throw new Error(
+        "script is on the wrong page! error somewhere when navigating to the order detail page",
+      );
+    }
+
+    await magentoPage.waitForSelector("textarea#history_comment");
+    await magentoPage.type(
+      "textarea#history_comment",
+      `${order.prontoReceipt} - ${order.result}`,
+    );
+    // submit the comment
+    await magentoPage.click('button[title="Submit Comment"]');
+
+    // check if comment was sent successfully
+    await magentoPage.waitForSelector("ul.note-list");
+    const comments = await magentoPage.$$eval("div.note-list-comment", (el) => {
+      console.log(el);
+      el.map((comment) => {
+        console.log(comment.innerText);
+      });
+    });
+
+    console.log(JSON.stringify(comments));
+
+    await await new Promise((r) => setTimeout(r, 60000));
+    const firstMagScreen = await magentoPage.content();
+    await saveContent(magentoPage, firstMagScreen, "firstMageScreen");
+  }
+
+  const arrayOfOneOrder = [orderDetails[0]];
+
+  const orderDetailsAfterProntoSelling = arrayOfOneOrder.map((order) =>
+    sellSingleOrder(order),
+  );
+  orderDetailsAfterProntoSelling.forEach(async (order) =>
+    inputProntoReceiptIntoMagento(await order),
+  );
 
   const latestContent = await prontoPage.content();
   await saveContent(prontoPage, latestContent, "last");
