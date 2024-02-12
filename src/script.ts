@@ -13,12 +13,13 @@ import * as fs from "node:fs";
   await prontoPage.setViewport({ width: 3840, height: 2160 });
   await magentoPage.setViewport({ width: 3840, height: 2160 });
 
+  // HELPER FUNCTIONS
   // enable console logging on prontoPage
   prontoPage.on("console", (message) => {
     console.log(`Message: ${message.text()}`);
   });
 
-  // function to save content html
+  // function that takes a screenshot and saves html
   async function saveContent(page: Page, content: string, filename: string) {
     await page.screenshot({
       path: `./screenshots/${filename}.png`,
@@ -104,10 +105,14 @@ import * as fs from "node:fs";
       path: "./screenshots/just-after-login-attempt.png",
     });
     // return a promise based upon did login succeed and throw if login failed
-    return await prontoPage.waitForSelector(
-      "button.folder[name='Sales &Orders']",
-    );
+    try {
+      await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
+    } catch (err) {
+      console.error(err);
+      return Promise.reject("did not login");
+    }
   }
+
   async function loginIntoMagento() {
     console.log("login to magento starting");
     // Navigate to magneto
@@ -128,8 +133,10 @@ import * as fs from "node:fs";
     return await magentoPage.waitForNavigation();
   }
   // retry login 2 times with 2 second interval
-  await retry(loginIntoPronto, { retries: 2, retryInterval: 2000 });
-  await retry(loginIntoMagento, { retries: 2, retryInterval: 2000 });
+  await Promise.all([
+    retry(loginIntoPronto, { retries: 2, retryInterval: 2000 }),
+    retry(loginIntoMagento, { retries: 2, retryInterval: 2000 }),
+  ]);
 
   // checking if login worked
   console.log("did login succced?", await didLoginSucced());
