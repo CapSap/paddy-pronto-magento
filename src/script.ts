@@ -410,10 +410,11 @@ import * as fs from "node:fs";
 */
   const latestContent = await prontoPage.content();
   await saveContent(prontoPage, latestContent, "last");
+
+  await browser.close();
+  // just for fun
   console.log("selling complete");
-
   await new Promise((r) => setTimeout(r, 2000));
-
   console.log(`xkkxxxkxxxkkxkkxkkxxxkkxxkl.   .';;;,,;:'..,:::okdodddkkkkkOXWWMMWKxdooxxxddxxxxxxxkkkOOkxdxkkddxkxx
   xkxxxxxxxxxkxkxxkxxxkkxxxkl.....,::,,'';'..,:llxkddddxkOOO0KNWWMMMNxoddxxxddxxdxxxxkkkkOkxddxxddxxxx
   xxxdxxxxdxxkkkkxkxxxxxxxxxd;...';;'.........,cldxooolloodxkOOKXNNWW0xKKkxxddxxdddxxkkxxkxxxdxxxxxxxd
@@ -448,5 +449,4 @@ import * as fs from "node:fs";
                                         .                        .. .;,',;:ccc:::::lllcclodddxxkkO0KNN
                                         .                       ..  .,'.'',,;:;,',;cc;;;cloodddddxxk0O
                                        ..           .           .   .'......',''.'':c'.,;:cllddooodxdl`);
-  await browser.close();
 })();
