@@ -130,23 +130,7 @@ import * as fs from "node:fs";
       }
     */
   }
-  // retry login 2 times with 2 second interval
-  try {
-    await Promise.all([
-      retry(loginIntoPronto, { retries: 2, retryInterval: 2000 }),
-      retry(loginIntoMagento, { retries: 2, retryInterval: 2000 }),
-    ]);
-  } catch {
-    throw new Error("failed to login to pronto and/or magento");
-  }
 
-  // saving pronto screen after login
-  const pageContent = await prontoPage.content();
-  await saveContent(
-    prontoPage,
-    pageContent,
-    "pronto-screen-just-before-button-folder",
-  );
   async function navigateToSellScreen() {
     //Go to status 30 screen
     const salesOrder = "button.folder[name='Sales &Orders']";
@@ -181,30 +165,6 @@ import * as fs from "node:fs";
     const status30 = await prontoPage.content();
     await saveContent(prontoPage, status30, "status30");
   }
-  // extract out all of the pronto numbers and magento order number, and put into an array of objects.
-  type orderDetails = { magentoOrder: string; prontoReceipt: string }[];
-  const orderDetails = await prontoPage.$$eval("tbody > tr", (tr) => {
-    const rowReturn = tr.reduce((acc, curr) => {
-      if (curr.querySelectorAll("td")[2].innerText === "") {
-        return acc;
-      } else {
-        return [
-          ...acc,
-          {
-            // when the results first come through, the screen is small and only what is visible to the eye is in the DOM. to see more orders we'd need to scroll
-            magentoOrder: curr.querySelectorAll("td")[2].innerText,
-            prontoReceipt: curr.querySelectorAll("td")[1].innerText,
-          },
-        ];
-      }
-    }, [] as orderDetails);
-
-    return rowReturn;
-  });
-
-  console.log("this arrray should have no empties", orderDetails);
-  // okay so we got the data! whats next?
-  // sell in pronto.
 
   type order = {
     magentoOrder: string;
@@ -269,6 +229,7 @@ import * as fs from "node:fs";
     // print and email the receipt to customer
     await pressEnterManyTimes(3);
     await new Promise((r) => setTimeout(r, 60000));
+
     const statusCheck = await prontoPage.content();
     await saveContent(prontoPage, statusCheck, "statusCheck");
 
@@ -290,15 +251,6 @@ import * as fs from "node:fs";
     };
   }
 
-  /*
-  // i want to iterate through orderDetails and save a new array with the result
-  const prontoSellResult = orderDetails.map((order) => {
-    console.log("pronto sell attempt for", order);
-    return sellSingleOrder(order);
-  });
-
-  console.log(prontoSellResult);
-*/
   async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
     console.log(order);
     // nav to order search page
@@ -386,16 +338,76 @@ import * as fs from "node:fs";
     const firstMagScreen = await magentoPage.content();
     await saveContent(magentoPage, firstMagScreen, "firstMageScreen");
   }
-  //sell an array of 1 order only and see what the results are
-  const arrayOfOneOrder = [orderDetails[0]];
-
-  const orderDetailsAfterProntoSelling = arrayOfOneOrder.map((order) =>
-    sellSingleOrder(order),
+  // FUNCTION CALLS
+  // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
+  try {
+    await Promise.all([
+      retry(loginIntoPronto, { retries: 2, retryInterval: 2000 }),
+      retry(loginIntoMagento, { retries: 2, retryInterval: 2000 }),
+    ]);
+  } catch {
+    throw new Error("failed to login to pronto and/or magento");
+  }
+  // to be removed
+  // saving pronto screen after login
+  const pageContent = await prontoPage.content();
+  await saveContent(
+    prontoPage,
+    pageContent,
+    "pronto-screen-just-before-button-folder",
   );
+
+  // 2. Navigate to status 30
+  await navigateToSellScreen();
+
+  // 3. Extract out all of the pronto numbers and magento order number, and put into an array of objects.
+  type orderDetails = { magentoOrder: string; prontoReceipt: string }[];
+  const orderDetails = await prontoPage.$$eval("tbody > tr", (tr) => {
+    const rowReturn = tr.reduce((acc, curr) => {
+      if (curr.querySelectorAll("td")[2].innerText === "") {
+        return acc;
+      } else {
+        return [
+          ...acc,
+          {
+            // when the results first come through, the screen is small and only what is visible to the eye is in the DOM. to see more orders we'd need to scroll
+            magentoOrder: curr.querySelectorAll("td")[2].innerText,
+            prontoReceipt: curr.querySelectorAll("td")[1].innerText,
+          },
+        ];
+      }
+    }, [] as orderDetails);
+
+    return rowReturn;
+  });
+
+  // 4a. Sell a small array and see what the results are
+  // array of 1 order .
+  const arrayOfOneOrder = [orderDetails[0]];
+  const orderDetailsAfterProntoSelling = arrayOfOneOrder.map(
+    async (order) =>
+      // do i need to await the below? i think i do because i want the promise to resolve. and we're doing the selling 1 by 1.
+      await sellSingleOrder(order),
+  );
+  // 4b. Get the result of above and update magento. inputting in magento will throw an error if something wrong happens
   orderDetailsAfterProntoSelling.forEach(async (order) =>
     inputProntoReceiptIntoMagento(await order),
   );
 
+  // 4c. and then that's the end of the script?
+  // what feedback do i want to give back to the user?
+
+  /*
+  // i want to iterate through orderDetails and save a new array with the result
+  const prontoSellResult = orderDetails.map(async (order) => {
+    console.log("pronto sell attempt for", order);
+    return await sellSingleOrder(order);
+  });
+
+  console.log(prontoSellResult);
+
+  prontoSellResult.forEach(async (order) => inputProntoReceiptIntoMagento(await order) )
+*/
   const latestContent = await prontoPage.content();
   await saveContent(prontoPage, latestContent, "last");
 
