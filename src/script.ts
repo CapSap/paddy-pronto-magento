@@ -31,15 +31,6 @@ import * as fs from "node:fs";
     }
   }
 
-  // do i need this function anymore? and it's also not that reliable ie i can't call it at anytime? or maybe i can
-  const didLoginSucced = async () => {
-    try {
-      await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
-      return true;
-    } catch (err) {
-      throw new Error("login failed");
-    }
-  };
   // from https://mtsknn.fi/blog/js-retry-on-fail/
   // function that will try to run again x number of times before throwing
   const retry = async <T>(
@@ -145,9 +136,6 @@ import * as fs from "node:fs";
   } catch {
     throw new Error("failed to login to pronto and/or magento");
   }
-
-  // checking if login worked
-  console.log("did login succced?", await didLoginSucced());
 
   // saving screen after login
   const pageContent = await prontoPage.content();
