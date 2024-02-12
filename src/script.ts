@@ -49,9 +49,15 @@ import * as fs from "node:fs";
   };
   const sleep = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  // press enter many times
+  async function pressEnterManyTimes(presses: number) {
+    for (let i = 0; i < presses; i++) {
+      await prontoPage.keyboard.press("Enter");
+    }
+  }
+
   async function loginIntoPronto() {
     console.log("loginto promto starting");
-
     // nav to pronto login screen and enter relevant deets
     await prontoPage.goto("https://pronto.paddypallin.com.au/");
     const contentJustAfterLoad = await prontoPage.content();
@@ -67,6 +73,7 @@ import * as fs from "node:fs";
     } catch {
       return Promise.reject("from the promise: could not log into pronto");
     }
+    // enter login details
     await prontoPage.type(
       "#login-username",
       process.env.PRONTO_USERNAME as string,
@@ -78,20 +85,18 @@ import * as fs from "node:fs";
     const prontoLoginButton = "#login-button";
     await prontoPage.waitForSelector(prontoLoginButton);
     await prontoPage.click(prontoLoginButton);
-
     // enter 2 factor and login
     const otp = generateToken(process.env.PRONTO_KEY as string);
     await prontoPage.type("#prompts", otp);
     const prontoLoginButtonFinal = "#login-button";
     await prontoPage.waitForSelector(prontoLoginButtonFinal);
-    console.log("log in attempt running");
     await prontoPage.click(prontoLoginButtonFinal);
     // return a promise based upon did login succeed and throw if login failed
     try {
       await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
     } catch (err) {
       console.error(err);
-      return Promise.reject("did not login");
+      return Promise.reject("did not login into pronto");
     }
   }
 
@@ -114,8 +119,16 @@ import * as fs from "node:fs";
     await magentoPage.click("button.action-login");
     return await magentoPage.waitForNavigation();
 
+    /*
     //TODO
     // i need to check if login worked and return a promise. same as pronto login
+
+      try {
+        await magentoPage.waitForSelector()
+      } catch (error) {
+        throw new Error('failed to login into magento')
+      }
+    */
   }
   // retry login 2 times with 2 second interval
   try {
@@ -127,60 +140,47 @@ import * as fs from "node:fs";
     throw new Error("failed to login to pronto and/or magento");
   }
 
-  // saving screen after login
+  // saving pronto screen after login
   const pageContent = await prontoPage.content();
   await saveContent(
     prontoPage,
     pageContent,
     "pronto-screen-just-before-button-folder",
   );
+  async function navigateToSellScreen() {
+    //Go to status 30 screen
+    const salesOrder = "button.folder[name='Sales &Orders']";
+    await prontoPage.waitForSelector(salesOrder);
+    await prontoPage.click(salesOrder);
 
-  //Go to status 30 screen
-  const salesOrder = "button.folder[name='Sales &Orders']";
-  await prontoPage.waitForSelector(salesOrder);
-  await prontoPage.click(salesOrder);
+    await prontoPage.waitForSelector(
+      "button.folder[name='&Enquire on Sales Orders']",
+    );
+    const orderEditMaintenance =
+      "button.folder[name='&Order Edit / Maintenance']";
+    await prontoPage.waitForSelector(orderEditMaintenance);
+    await prontoPage.click(orderEditMaintenance);
 
-  await prontoPage.waitForSelector(
-    "button.folder[name='&Enquire on Sales Orders']",
-  );
-  const orderEditMaintenance =
-    "button.folder[name='&Order Edit / Maintenance']";
-  await prontoPage.waitForSelector(orderEditMaintenance);
-  await prontoPage.click(orderEditMaintenance);
+    const salesOrderManagement = "button[name='&Sales Order Management']";
+    await prontoPage.waitForSelector(salesOrderManagement);
+    await prontoPage.click(salesOrderManagement);
 
-  const salesOrderManagement = "button[name='&Sales Order Management']";
-  await prontoPage.waitForSelector(salesOrderManagement);
-  await prontoPage.click(salesOrderManagement);
+    // press enter many times
+    const firstInput =
+      "input[title='Enter the customer you wish to enquire on']";
+    await prontoPage.waitForSelector(firstInput);
+    await pressEnterManyTimes(4);
+    await prontoPage.keyboard.type("208");
 
-  // press enter many times
-  const firstInput = "input[title='Enter the customer you wish to enquire on']";
-  await prontoPage.waitForSelector(firstInput);
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.type("208");
+    await pressEnterManyTimes(4);
+    await prontoPage.keyboard.type("30");
+    await pressEnterManyTimes(8);
+    await prontoPage.waitForSelector("td.data-tbody");
 
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.type("30");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-  await prontoPage.keyboard.press("Enter");
-
-  await prontoPage.waitForSelector("td.data-tbody");
-
-  // save page snapshot as status30
-  const status30 = await prontoPage.content();
-  await saveContent(prontoPage, status30, "status30");
-
+    // save page snapshot as status30
+    const status30 = await prontoPage.content();
+    await saveContent(prontoPage, status30, "status30");
+  }
   // extract out all of the pronto numbers and magento order number, and put into an array of objects.
   type orderDetails = { magentoOrder: string; prontoReceipt: string }[];
   const orderDetails = await prontoPage.$$eval("tbody > tr", (tr) => {
