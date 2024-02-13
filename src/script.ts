@@ -5,7 +5,7 @@ import { generateToken } from "authenticator";
 import * as fs from "node:fs";
 
 (async () => {
-  // function that takes a screenshot and saves html
+  // function to save content html
   async function saveContent(page: Page, content: string, filename: string) {
     await page.screenshot({
       path: `./screenshots/${filename}.png`,
@@ -104,6 +104,8 @@ import * as fs from "node:fs";
     );
     await magentoPage.click("button.action-login");
     return await magentoPage.waitForNavigation();
+    // retry login 2 times with 2 second interval
+    await retry(loginIntoPronto, { retries: 2, retryInterval: 2000 });
 
     /*
     //TODO
@@ -152,22 +154,19 @@ import * as fs from "node:fs";
     await saveContent(prontoPage, status30, "status30");
   }
 
+  const firstOrder = orderDetails[0];
   type order = {
     magentoOrder: string;
     prontoReceipt: string;
   };
-<<<<<<< HEAD
   type orderWithSellResult = {
     magentoOrder: string;
     prontoReceipt: string;
     result: string;
   };
-  async function sellSingleOrder(order: order): Promise<orderWithSellResult> {
-=======
   async function sellSingleOrder(order: order) {
     console.log("pronto sell attempt for", order);
 
->>>>>>> parent of 5e4c423 (create a new array with pronto selling results)
     // select td with correct mag order number
     const magOrder = await prontoPage.waitForSelector(
       `::-p-text("${order.magentoOrder}")`,
@@ -243,7 +242,6 @@ import * as fs from "node:fs";
     };
   }
 
-<<<<<<< HEAD
   async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
     console.log(order);
     // nav to order search page
@@ -394,6 +392,15 @@ import * as fs from "node:fs";
   orderDetailsAfterProntoSelling.forEach(async (order) =>
     inputProntoReceiptIntoMagento(await order),
   );
+  // i want to iterate through orderDetails and save a new array with the result
+  /*
+  const prontoSellResult = orderDetails.map((order) => {
+    console.log("pronto sell attempt for", order);
+    return sellSingleOrder(order);
+  });
+
+  console.log(prontoSellResult);
+*/
 
   // 4c. and then that's the end of the script?
   // what feedback do i want to give back to the user?
@@ -409,10 +416,8 @@ import * as fs from "node:fs";
 
   prontoSellResult.forEach(async (order) => inputProntoReceiptIntoMagento(await order) )
 */
-=======
   const res = await sellSingleOrder(firstOrder);
   console.log("res", res);
->>>>>>> parent of 5e4c423 (create a new array with pronto selling results)
   const latestContent = await prontoPage.content();
   await saveContent(prontoPage, latestContent, "last");
 
