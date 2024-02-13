@@ -92,6 +92,9 @@ import * as fs from "node:fs";
     await magentoPage.goto(
       `https://www.paddypallin.com.au/agpallin_20/admin/dashboard/index/key/${process.env.MAG_KEY}`,
     );
+    const newMagePage = await magentoPage.content();
+    await saveContent(magentoPage, newMagePage, "mag-page-just-loaded");
+
     //login into magento
     await magentoPage.waitForSelector("#username");
     await magentoPage.type(
@@ -103,8 +106,8 @@ import * as fs from "node:fs";
       process.env.MAGENTO_PASSWORD as string,
     );
     await magentoPage.click("button.action-login");
+    console.log("finished login");
     return await magentoPage.waitForNavigation();
-
     /*
     //TODO
     // i need to check if login worked and return a promise. same as pronto login
