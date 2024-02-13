@@ -156,12 +156,18 @@ import * as fs from "node:fs";
     magentoOrder: string;
     prontoReceipt: string;
   };
+<<<<<<< HEAD
   type orderWithSellResult = {
     magentoOrder: string;
     prontoReceipt: string;
     result: string;
   };
   async function sellSingleOrder(order: order): Promise<orderWithSellResult> {
+=======
+  async function sellSingleOrder(order: order) {
+    console.log("pronto sell attempt for", order);
+
+>>>>>>> parent of 5e4c423 (create a new array with pronto selling results)
     // select td with correct mag order number
     const magOrder = await prontoPage.waitForSelector(
       `::-p-text("${order.magentoOrder}")`,
@@ -237,6 +243,7 @@ import * as fs from "node:fs";
     };
   }
 
+<<<<<<< HEAD
   async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
     console.log(order);
     // nav to order search page
@@ -402,6 +409,10 @@ import * as fs from "node:fs";
 
   prontoSellResult.forEach(async (order) => inputProntoReceiptIntoMagento(await order) )
 */
+=======
+  const res = await sellSingleOrder(firstOrder);
+  console.log("res", res);
+>>>>>>> parent of 5e4c423 (create a new array with pronto selling results)
   const latestContent = await prontoPage.content();
   await saveContent(prontoPage, latestContent, "last");
 
