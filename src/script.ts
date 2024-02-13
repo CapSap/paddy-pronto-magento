@@ -5,20 +5,6 @@ import { generateToken } from "authenticator";
 import * as fs from "node:fs";
 
 (async () => {
-  // Launch the browser and open 2 new blank pages
-  const browser = await puppeteer.launch();
-  const magentoPage = await browser.newPage();
-  const prontoPage = await browser.newPage();
-  // Set screen size
-  await prontoPage.setViewport({ width: 3840, height: 2160 });
-  await magentoPage.setViewport({ width: 3840, height: 2160 });
-
-  // HELPER FUNCTIONS
-  // enable console logging on prontoPage
-  prontoPage.on("console", (message) => {
-    console.log(`Message: ${message.text()}`);
-  });
-
   // function that takes a screenshot and saves html
   async function saveContent(page: Page, content: string, filename: string) {
     await page.screenshot({
@@ -339,15 +325,23 @@ import * as fs from "node:fs";
     await saveContent(magentoPage, firstMagScreen, "firstMageScreen");
   }
   // FUNCTION CALLS
+
+  // 0. Launch the browser and open 2 new blank pages
+  const browser = await puppeteer.launch();
+  const magentoPage = await browser.newPage();
+  const prontoPage = await browser.newPage();
+  // Set screen size
+  await prontoPage.setViewport({ width: 3840, height: 2160 });
+  await magentoPage.setViewport({ width: 3840, height: 2160 });
+
+  // enable console logging on prontoPage
+  prontoPage.on("console", (message) => {
+    console.log(`Message: ${message.text()}`);
+  });
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
-  try {
-    await Promise.all([
-      retry(loginIntoPronto, { retries: 2, retryInterval: 2000 }),
-      retry(loginIntoMagento, { retries: 2, retryInterval: 2000 }),
-    ]);
-  } catch {
-    throw new Error("failed to login to pronto and/or magento");
-  }
+  await retry(loginIntoPronto, { retries: 2, retryInterval: 2000 });
+  await retry(loginIntoMagento, { retries: 2, retryInterval: 2000 });
+
   // to be removed
   // saving pronto screen after login
   const pageContent = await prontoPage.content();
