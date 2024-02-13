@@ -154,7 +154,6 @@ import * as fs from "node:fs";
     await saveContent(prontoPage, status30, "status30");
   }
 
-  const firstOrder = orderDetails[0];
   type order = {
     magentoOrder: string;
     prontoReceipt: string;
@@ -416,8 +415,6 @@ import * as fs from "node:fs";
 
   prontoSellResult.forEach(async (order) => inputProntoReceiptIntoMagento(await order) )
 */
-  const res = await sellSingleOrder(firstOrder);
-  console.log("res", res);
   const latestContent = await prontoPage.content();
   await saveContent(prontoPage, latestContent, "last");
 
