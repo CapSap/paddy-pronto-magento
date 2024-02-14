@@ -263,6 +263,7 @@ import * as fs from "node:fs";
   }
 
   async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
+    console.log("sanity check");
     console.log("input recept in mag func running on ", order);
     // nav to order search page
     await magentoPage.goto(
@@ -302,10 +303,10 @@ import * as fs from "node:fs";
     if (!newUrl) {
       throw new Error("could not get URL from mag order");
     }
-    // its naving to the wrong page. why?
-    // oh because maybe the old result was still on the page? and we haven't navigated away yet?
-    // checking terminal logs..
-    // yeah we did go to a page a while back.
+
+    // I HAVE NO IDEA WHY IT'S NAVING TO THE WRONG PAGE SOMETIMES.
+    // what is going on?
+    // also maybe as well i could find a better method for naving to the right order page
 
     const checkSearchResults = await magentoPage.content();
     await saveContent(magentoPage, checkSearchResults, "check-search-results");
@@ -392,6 +393,28 @@ import * as fs from "node:fs";
   // 2. Navigate to status 30
   await navigateToSellScreen();
 
+  // run the dummy test here
+  const dummyArray = [
+    {
+      magentoOrder: "1000683422",
+      prontoReceipt: "2602121",
+      result: "sold successfully by node script -cm",
+    },
+    {
+      magentoOrder: "1000683428",
+      prontoReceipt: "2602139",
+      result: "sold successfully by node script -cm",
+    },
+  ];
+
+  const orderDetailsAfterMagentoCommentTEST = await runAsyncFuncInSeries(
+    dummyArray,
+    inputProntoReceiptIntoMagento,
+  );
+  console.log("magneto results", orderDetailsAfterMagentoCommentTEST);
+  await browser.close();
+  return;
+
   // 3. Extract out all of the pronto numbers and magento order number, and put into an array of objects.
   type orderDetails = { magentoOrder: string; prontoReceipt: string }[];
   const orderDetails = await prontoPage.$$eval("tbody > tr", (tr) => {
@@ -435,7 +458,7 @@ import * as fs from "node:fs";
     orderDetailsAfterProntoSelling,
     inputProntoReceiptIntoMagento,
   );
-  console.log("magneto results", orderDetailsAfterMagentoComment);
+  console.log("magneto results", orderDetailsAfterMagentoCommentTEST);
   // 4c. and then that's the end of the script?
   // what feedback do i want to give back to the user?
 
