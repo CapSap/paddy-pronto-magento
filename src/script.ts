@@ -308,6 +308,9 @@ import * as fs from "node:fs";
     // what is going on?
     // also maybe as well i could find a better method for naving to the right order page
 
+    // e.g. number from page  1000683431 number passed in as argument 1000683428
+    // and the array / was is the dummy array`
+
     const checkSearchResults = await magentoPage.content();
     await saveContent(magentoPage, checkSearchResults, "check-search-results");
 
