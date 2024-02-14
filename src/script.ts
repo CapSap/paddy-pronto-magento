@@ -229,8 +229,6 @@ import * as fs from "node:fs";
     const statusCheck = await prontoPage.content();
     await saveContent(prontoPage, statusCheck, "statusCheck");
 
-    console.log("sell single in pronto finished for", order);
-
     // check header screen to make sure order was sold/updated successfully
     try {
       await prontoPage.waitForSelector('label[title="Ready to Update"]');
@@ -243,7 +241,13 @@ import * as fs from "node:fs";
         result: "failed to sell automatically. problem somewhere in pronto -cm",
       };
     }
+
+    console.log("sell single in pronto finished for", order);
     await prontoPage.keyboard.press("Escape");
+    await prontoPage.waitForNetworkIdle();
+
+    const pageAferEscPress = await prontoPage.content();
+    saveContent(prontoPage, pageAferEscPress, "pageAferEscPress");
     return {
       ...order,
       result: "sold successfully by node script -cm",
