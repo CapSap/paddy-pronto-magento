@@ -264,11 +264,14 @@ import * as fs from "node:fs";
       "input.admin__control-text.data-grid-search-control",
     );
     // try to remove active filters
+    console.log("try to remove active filters");
     try {
       await magentoPage.click("button.action-remove");
     } catch {
       console.log("no filters to remove");
     }
+
+    console.log("clear input");
     // clear input
     const searchInput = await magentoPage.$(
       "input.admin__control-text.data-grid-search-control",
@@ -281,11 +284,9 @@ import * as fs from "node:fs";
       order.magentoOrder,
     );
     await magentoPage.keyboard.press("Enter");
+
     await magentoPage.waitForSelector("tr.data-row");
     await magentoPage.waitForSelector("a.action-menu-item");
-
-    //trying to wait for networkidle
-    await magentoPage.waitForNetworkIdle();
 
     const newUrl = await magentoPage.$eval("a.action-menu-item", (el) =>
       el.getAttribute("href"),
@@ -297,6 +298,9 @@ import * as fs from "node:fs";
     // oh because maybe the old result was still on the page? and we haven't navigated away yet?
     // checking terminal logs..
     // yeah we did go to a page a while back.
+
+    const checkSearchResults = await magentoPage.content();
+    await saveContent(magentoPage, checkSearchResults, "check-search-results");
 
     await magentoPage.goto(newUrl);
 
@@ -311,8 +315,9 @@ import * as fs from "node:fs";
       },
     );
     console.log(
-      "number from page and order being sold",
+      "number from page ",
       magOrderNumberFromPage,
+      "number passed in as argument",
       order.magentoOrder,
     );
     if (magOrderNumberFromPage !== order.magentoOrder) {
