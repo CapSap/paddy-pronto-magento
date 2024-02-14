@@ -182,8 +182,11 @@ import * as fs from "node:fs";
 
     // Check if the order in pronto matches order passed as argument
     await prontoPage.waitForNetworkIdle();
+    const whyDidSelectorFail = await prontoPage.content();
+    await saveContent(prontoPage, whyDidSelectorFail, "whyDidSelectorFail");
+
     const receiptNoFromPronto = await prontoPage.$eval(
-      "div.screen-input  ",
+      "div.screen-input",
       (el) => {
         return el.querySelector("input")?.value;
       },
@@ -226,6 +229,8 @@ import * as fs from "node:fs";
     const statusCheck = await prontoPage.content();
     await saveContent(prontoPage, statusCheck, "statusCheck");
 
+    console.log("sell single in pronto finished for", order);
+
     // check header screen to make sure order was sold/updated successfully
     try {
       await prontoPage.waitForSelector('label[title="Ready to Update"]');
@@ -246,7 +251,7 @@ import * as fs from "node:fs";
   }
 
   async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
-    console.log(order);
+    console.log("input recept in mag func running on ", order);
     // nav to order search page
     await magentoPage.goto(
       `https://www.paddypallin.com.au/agpallin_20/sales/order/index/key/${process.env.MAG_KEY}/`,
@@ -326,6 +331,7 @@ import * as fs from "node:fs";
       });
     });
 
+    // this function should return a promise similar to pronto sell func.
     console.log(JSON.stringify(comments));
 
     await await new Promise((r) => setTimeout(r, 60000));
@@ -391,27 +397,33 @@ import * as fs from "node:fs";
 
   // 4a. Sell a small array and see what the results are
   // array of 1 order .
-  const arrayOfOneOrder = [orderDetails[0]];
+  const smallArray = orderDetails.slice(0, 2);
 
-  const orderDetailsAfterProntoSelling2 = arrayOfOneOrder.reduce(
-    async (acc, curr) => {
-      const result = await acc;
-      return [...result, await sellSingleOrder(curr)];
-    },
-    Promise.resolve([]) as Promise<orderDetails>,
+  console.log("small array", smallArray);
+
+  const runAsyncFuncInSeries = async (array, fun: (order: object) => void) => {
+    const results = [];
+    for (const order of array) {
+      results.push(await fun(order));
+    }
+    return results;
+  };
+
+  const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
+    smallArray,
+    sellSingleOrder,
   );
 
-  console.log(orderDetailsAfterProntoSelling2);
-
-  // const orderDetailsAfterProntoSelling = arrayOfOneOrder.map((order) =>
-  //   // do i need to await the below? i think i do because i want the promise to resolve. and we're doing the selling 1 by 1.
-  //   sellSingleOrder(order),
-  // );
+  console.log(
+    "this should be an array of orders with result key",
+    orderDetailsAfterProntoSelling,
+  );
   // // 4b. Get the result of above and update magento. inputting in magento will throw an error if something wrong happens
-  // orderDetailsAfterProntoSelling.forEach(async (order) =>
-  //   inputProntoReceiptIntoMagento(await order),
-  // );
-
+  const orderDetailsAfterMagentoComment = await runAsyncFuncInSeries(
+    orderDetailsAfterProntoSelling,
+    inputProntoReceiptIntoMagento,
+  );
+  console.log("magneto results", orderDetailsAfterMagentoComment);
   // 4c. and then that's the end of the script?
   // what feedback do i want to give back to the user?
 
