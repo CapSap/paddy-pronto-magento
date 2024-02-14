@@ -238,6 +238,7 @@ import * as fs from "node:fs";
         result: "failed to sell automatically. problem somewhere in pronto -cm",
       };
     }
+    await prontoPage.keyboard.press("Escape");
     return {
       ...order,
       result: "sold successfully by node script -cm",
