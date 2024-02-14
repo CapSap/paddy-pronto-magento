@@ -284,6 +284,9 @@ import * as fs from "node:fs";
     await magentoPage.waitForSelector("tr.data-row");
     await magentoPage.waitForSelector("a.action-menu-item");
 
+    //trying to wait for networkidle
+    await magentoPage.waitForNetworkIdle();
+
     const newUrl = await magentoPage.$eval("a.action-menu-item", (el) =>
       el.getAttribute("href"),
     );
