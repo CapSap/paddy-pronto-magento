@@ -82,6 +82,7 @@ import * as fs from "node:fs";
     // return a promise based upon did login succeed and throw if login failed
     try {
       await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
+      console.log("logon to pronto successfully");
     } catch (err) {
       console.error(err);
       return Promise.reject("did not login into pronto");
@@ -169,7 +170,7 @@ import * as fs from "node:fs";
   };
   async function sellSingleOrder(order: order): Promise<orderWithSellResult> {
     // select td with correct mag order number
-    console.log("sell single order fun running");
+    console.log("sell single order fun running for", order);
     const magOrder = await prontoPage.waitForSelector(
       `::-p-text("${order.magentoOrder}")`,
     );
@@ -193,7 +194,6 @@ import * as fs from "node:fs";
       );
     }
     // continue selling as normal
-    console.log("test", receiptNoFromPronto);
     await prontoPage.keyboard.type("u");
     await prontoPage.keyboard.type("70");
     await pressEnterManyTimes(3);
@@ -235,12 +235,12 @@ import * as fs from "node:fs";
       );
       return {
         ...order,
-        result: "failed to sell automatically. problem somewhere in pronto",
+        result: "failed to sell automatically. problem somewhere in pronto -cm",
       };
     }
     return {
       ...order,
-      result: "sold successfully by node script",
+      result: "sold successfully by node script -cm",
     };
   }
 
