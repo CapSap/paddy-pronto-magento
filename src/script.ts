@@ -42,6 +42,14 @@ import * as fs from "node:fs";
     }
   }
 
+  const runAsyncFuncInSeries = async (array, fun: (order: object) => void) => {
+    const results = [];
+    for (const order of array) {
+      results.push(await fun(order));
+    }
+    return results;
+  };
+
   async function loginIntoPronto() {
     console.log("loginto promto starting");
     // nav to pronto login screen and enter relevant deets
@@ -412,14 +420,6 @@ import * as fs from "node:fs";
   const smallArray = orderDetails.slice(0, 2);
 
   console.log("small array", smallArray);
-
-  const runAsyncFuncInSeries = async (array, fun: (order: object) => void) => {
-    const results = [];
-    for (const order of array) {
-      results.push(await fun(order));
-    }
-    return results;
-  };
 
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
     smallArray,
