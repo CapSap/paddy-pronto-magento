@@ -121,6 +121,7 @@ import * as fs from "node:fs";
   }
 
   async function navigateToSellScreen() {
+    console.log("nav to sell screen fun running");
     //Go to status 30 screen
     const salesOrder = "button.folder[name='Sales &Orders']";
     await prontoPage.waitForSelector(salesOrder);
@@ -166,6 +167,7 @@ import * as fs from "node:fs";
   };
   async function sellSingleOrder(order: order): Promise<orderWithSellResult> {
     // select td with correct mag order number
+    console.log("sell single order fun running");
     const magOrder = await prontoPage.waitForSelector(
       `::-p-text("${order.magentoOrder}")`,
     );
@@ -378,18 +380,30 @@ import * as fs from "node:fs";
     return rowReturn;
   });
 
+  console.log("result of order details array", orderDetails);
+
   // 4a. Sell a small array and see what the results are
   // array of 1 order .
   const arrayOfOneOrder = [orderDetails[0]];
-  const orderDetailsAfterProntoSelling = arrayOfOneOrder.map(
-    async (order) =>
-      // do i need to await the below? i think i do because i want the promise to resolve. and we're doing the selling 1 by 1.
-      await sellSingleOrder(order),
+
+  const orderDetailsAfterProntoSelling2 = arrayOfOneOrder.reduce(
+    async (acc, curr) => {
+      const result = await acc;
+      return [...result, await sellSingleOrder(curr)];
+    },
+    Promise.resolve([]) as Promise<orderDetails>,
   );
-  // 4b. Get the result of above and update magento. inputting in magento will throw an error if something wrong happens
-  orderDetailsAfterProntoSelling.forEach(async (order) =>
-    inputProntoReceiptIntoMagento(await order),
-  );
+
+  console.log(orderDetailsAfterProntoSelling2);
+
+  // const orderDetailsAfterProntoSelling = arrayOfOneOrder.map((order) =>
+  //   // do i need to await the below? i think i do because i want the promise to resolve. and we're doing the selling 1 by 1.
+  //   sellSingleOrder(order),
+  // );
+  // // 4b. Get the result of above and update magento. inputting in magento will throw an error if something wrong happens
+  // orderDetailsAfterProntoSelling.forEach(async (order) =>
+  //   inputProntoReceiptIntoMagento(await order),
+  // );
 
   // 4c. and then that's the end of the script?
   // what feedback do i want to give back to the user?
@@ -407,7 +421,7 @@ import * as fs from "node:fs";
 */
   const latestContent = await prontoPage.content();
   await saveContent(prontoPage, latestContent, "last");
-
+  console.log("browser close about to run");
   await browser.close();
   // just for fun
   console.log("selling complete");
