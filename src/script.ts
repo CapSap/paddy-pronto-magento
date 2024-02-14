@@ -344,8 +344,12 @@ import * as fs from "node:fs";
 
   // enable console logging on prontoPage
   prontoPage.on("console", (message) => {
-    console.log(`Message: ${message.text()}`);
+    console.log(`pronto Message: ${message.text()}`);
   });
+  magentoPage.on("console", (message) => {
+    console.log(`magneot Message: ${message.text()}`);
+  });
+
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
   await retry(loginIntoPronto, { retries: 2, retryInterval: 2000 });
   await retry(loginIntoMagento, { retries: 2, retryInterval: 2000 });
