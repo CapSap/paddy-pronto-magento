@@ -5,7 +5,8 @@ import { generateToken } from "authenticator";
 import * as fs from "node:fs";
 
 (async () => {
-  // function that takes a screenshot and saves html
+  // function that takes a screenshot and saves html.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function saveContent(page: Page, content: string, filename: string) {
     await page.screenshot({
       path: `./screenshots/${filename}.png`,
@@ -82,7 +83,10 @@ import * as fs from "node:fs";
     }
   };
 
-  const runAsyncFuncInSeries = async (array, fun: (order: object) => void) => {
+  const runAsyncFuncInSeries = async (
+    array: [],
+    fun: (order: object) => void,
+  ) => {
     const results = [];
     for (const order of array) {
       results.push(await fun(order));
