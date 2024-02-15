@@ -4,7 +4,7 @@ import { generateToken } from "authenticator";
 
 import * as fs from "node:fs";
 
-(async () => {
+export const prontoSellMagCommentScript = async () => {
   // function that takes a screenshot and saves html.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function saveContent(page: Page, content: string, filename: string) {
@@ -501,4 +501,4 @@ import * as fs from "node:fs";
                                         .                        .. .;,',;:ccc:::::lllcclodddxxkkO0KNN
                                         .                       ..  .,'.'',,;:;,',;cc;;;cloodddddxxk0O
                                        ..           .           .   .'......',''.'':c'.,;:cllddooodxdl`);
-})();
+};
