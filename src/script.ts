@@ -84,8 +84,10 @@ import * as fs from "node:fs";
   };
 
   const runAsyncFuncInSeries = async (
-    array: [],
-    fun: (order: object) => void,
+    array: order[] | orderWithSellResult[],
+    fun: (
+      order: order | orderWithSellResult,
+    ) => Promise<orderWithSellResult> | Promise<orderWithMagCommentResult>,
   ) => {
     const results = [];
     for (const order of array) {
@@ -207,6 +209,7 @@ import * as fs from "node:fs";
     prontoReceipt: string;
     result: string;
   };
+  type orderWithMagCommentResult = orderWithSellResult & { magResult: string };
   async function sellSingleOrder(order: order): Promise<orderWithSellResult> {
     // select td with correct mag order number
     console.log("sell single order fun running for", order);
@@ -274,7 +277,15 @@ import * as fs from "node:fs";
     };
   }
 
-  async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
+  async function inputProntoReceiptIntoMagento(
+    order: orderWithSellResult,
+  ): Promise<orderWithMagCommentResult> {
+    if (!Object.prototype.hasOwnProperty.call(order, "result")) {
+      throw new Error(
+        "wrong argument passed as parameter to inputProntoReceiptIntoMagento function",
+      );
+    }
+
     console.log("input recept in mag func running on ", order);
     // nav to order search page
     await magentoPage.goto(
@@ -290,8 +301,6 @@ import * as fs from "node:fs";
     } catch {
       console.log("no filters to remove");
     }
-
-    console.log("clear input");
     // clear input
     const searchInput = await magentoPage.$(
       "input.admin__control-text.data-grid-search-control",
@@ -305,6 +314,10 @@ import * as fs from "node:fs";
     );
 
     await magentoPage.keyboard.press("Enter");
+    // how to wait for spinner to be display none
+    await magentoPage.waitForSelector("div.admin__data-grid-loading-mask", {
+      hidden: true,
+    });
 
     await waitTillHTMLRendered(magentoPage);
 
@@ -312,17 +325,22 @@ import * as fs from "node:fs";
       magentoPage.waitForSelector("tr.data-row"),
       magentoPage.waitForSelector("a.action-menu-item"),
     ]);
-    const newUrl = await magentoPage.$eval("a.action-menu-item", (el) => {
-      console.log(`this is the order being navigated to: ${el}`);
-      return el.getAttribute("href");
-    });
-    if (!newUrl) {
-      throw new Error("could not get URL from mag order");
-    }
 
-    await magentoPage.goto(newUrl);
+    await waitTillHTMLRendered(magentoPage);
 
-    // Check if comment was added successfully
+    const screenBeforeClick = await magentoPage.content();
+    await saveContent(magentoPage, screenBeforeClick, "screenBeforeClick");
+
+    await Promise.all([
+      magentoPage.click("td > a"),
+      magentoPage.waitForNavigation(),
+    ]);
+
+    const screenAfterClick = await magentoPage.content();
+    await saveContent(magentoPage, screenAfterClick, "screenAfterClick");
+
+    // Check if we have navigated to correct page
+
     const magOrderNumberFromPage = await magentoPage.$eval(
       "h1.page-title",
       (el) => {
@@ -343,6 +361,8 @@ import * as fs from "node:fs";
     // submit the comment
     await magentoPage.click('button[title="Submit Comment"]');
     // check if comment was sent successfully
+    await magentoPage.waitForSelector("div.loading-mask", { hidden: true });
+
     await waitTillHTMLRendered(magentoPage);
     await magentoPage.waitForSelector("ul.note-list");
     const comments = await magentoPage.$$eval("div.note-list-comment", (el) => {
@@ -417,12 +437,12 @@ import * as fs from "node:fs";
 
   // 4a. Sell a small array and see what the results are
   // array of 1 order .
-  const smallArray = orderDetails.slice(0, 2);
+  const smallArray = orderDetails.slice(0, 3);
 
   console.log("small array", smallArray);
 
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
-    smallArray,
+    orderDetails,
     sellSingleOrder,
   );
 
