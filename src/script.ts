@@ -318,7 +318,6 @@ import * as fs from "node:fs";
     await magentoPage.waitForSelector("div.admin__data-grid-loading-mask", {
       hidden: true,
     });
-    console.log("did we make it here? ");
 
     await waitTillHTMLRendered(magentoPage);
 
@@ -326,10 +325,19 @@ import * as fs from "node:fs";
       magentoPage.waitForSelector("tr.data-row"),
       magentoPage.waitForSelector("a.action-menu-item"),
     ]);
+
+    await waitTillHTMLRendered(magentoPage);
+
+    const screenBeforeClick = await magentoPage.content();
+    await saveContent(magentoPage, screenBeforeClick, "screenBeforeClick");
+
     await Promise.all([
       magentoPage.click("td > a"),
       magentoPage.waitForNavigation(),
     ]);
+
+    const screenAfterClick = await magentoPage.content();
+    await saveContent(magentoPage, screenAfterClick, "screenAfterClick");
 
     // Check if we have navigated to correct page
 
@@ -429,7 +437,7 @@ import * as fs from "node:fs";
 
   // 4a. Sell a small array and see what the results are
   // array of 1 order .
-  const smallArray = orderDetails.slice(0, 2);
+  const smallArray = orderDetails.slice(0, 3);
 
   console.log("small array", smallArray);
 
