@@ -273,10 +273,6 @@ import * as fs from "node:fs";
     await prontoPage.waitForNetworkIdle();
     // print and email the receipt to customer
     await pressEnterManyTimes(3);
-    await new Promise((r) => setTimeout(r, 60000));
-
-    const statusCheck = await prontoPage.content();
-    await saveContent(prontoPage, statusCheck, "statusCheck");
 
     // check header screen to make sure order was sold/updated successfully
     try {
@@ -513,7 +509,6 @@ import * as fs from "node:fs";
     orderDetailsAfterProntoSelling,
     inputProntoReceiptIntoMagento,
   );
-  console.log("magneto results", orderDetailsAfterMagentoCommentTEST);
   // 4c. and then that's the end of the script?
   // what feedback do i want to give back to the user?
 
