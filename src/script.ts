@@ -221,6 +221,7 @@ import * as fs from "node:fs";
 
     // Check if the order in pronto matches order passed as argument
     await prontoPage.waitForNetworkIdle();
+    await waitTillHTMLRendered(prontoPage);
 
     const receiptNoFromPronto = await prontoPage.$eval(
       "div.screen-input",
