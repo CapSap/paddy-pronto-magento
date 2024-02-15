@@ -470,28 +470,6 @@ import * as fs from "node:fs";
   // 2. Navigate to status 30
   await navigateToSellScreen();
 
-  // run the dummy test here
-  const dummyArray = [
-    {
-      magentoOrder: "1000683422",
-      prontoReceipt: "2602121",
-      result: "sold successfully by node script -cm",
-    },
-    {
-      magentoOrder: "1000683428",
-      prontoReceipt: "2602139",
-      result: "sold successfully by node script -cm",
-    },
-  ];
-
-  const orderDetailsAfterMagentoCommentTEST = await runAsyncFuncInSeries(
-    dummyArray,
-    inputProntoReceiptIntoMagento,
-  );
-  console.log("magneto results", orderDetailsAfterMagentoCommentTEST);
-  await browser.close();
-  return;
-
   // 3. Extract out all of the pronto numbers and magento order number, and put into an array of objects.
   type orderDetails = { magentoOrder: string; prontoReceipt: string }[];
   const orderDetails = await prontoPage.$$eval("tbody > tr", (tr) => {
