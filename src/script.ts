@@ -65,6 +65,7 @@ import * as fs from "node:fs";
     try {
       await prontoPage.waitForSelector("#login-username");
     } catch {
+      await prontoPage.click("button#login-button");
       return Promise.reject(
         "could not log into pronto. could not find the login-username input",
       );
