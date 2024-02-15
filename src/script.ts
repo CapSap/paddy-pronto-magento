@@ -223,6 +223,7 @@ import * as fs from "node:fs";
     await prontoPage.waitForNetworkIdle();
     await waitTillHTMLRendered(prontoPage);
 
+    // be aware: below selector fails intermittently rarely. is there a better selector i could wait for?
     const receiptNoFromPronto = await prontoPage.$eval(
       "div.screen-input",
       (el) => {
