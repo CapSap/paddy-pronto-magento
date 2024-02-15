@@ -4,8 +4,6 @@ import { generateToken } from "authenticator";
 
 import * as fs from "node:fs";
 
-import { tryAgainComment } from "./temp.js";
-
 (async () => {
   // function that takes a screenshot and saves html.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -453,7 +451,7 @@ import { tryAgainComment } from "./temp.js";
   // what feedback do i want to give back to the user?
   console.log(
     "auto selling complete. Results: ",
-    orderDetailsAfterMagentoComment2,
+    orderDetailsAfterMagentoComment,
   );
 
   console.log("browser close about to run");
