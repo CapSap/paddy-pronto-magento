@@ -437,12 +437,16 @@ import * as fs from "node:fs";
   );
   // 4c. and then that's the end of the script?
   // what feedback do i want to give back to the user?
+  console.log(
+    "auto selling complete. Results: ",
+    orderDetailsAfterMagentoComment,
+  );
 
   console.log("browser close about to run");
   await browser.close();
   // just for fun
   console.log("selling complete");
-  await new Promise((r) => setTimeout(r, 2000));
+  await new Promise((r) => setTimeout(r, 4000));
   console.log(`xkkxxxkxxxkkxkkxkkxxxkkxxkl.   .';;;,,;:'..,:::okdodddkkkkkOXWWMMWKxdooxxxddxxxxxxxkkkOOkxdxkkddxkxx
   xkxxxxxxxxxkxkxxkxxxkkxxxkl.....,::,,'';'..,:llxkddddxkOOO0KNWWMMMNxoddxxxddxxdxxxxkkkkOkxddxxddxxxx
   xxxdxxxxdxxkkkkxkxxxxxxxxxd;...';;'.........,cldxooolloodxkOOKXNNWW0xKKkxxddxxdddxxkkxxkxxxdxxxxxxxd
