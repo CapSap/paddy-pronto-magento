@@ -1,5 +1,6 @@
 export const tryAgainComment = [
-  {
+  /* 
+   {
     magentoOrder: "1000683710",
     prontoReceipt: "2602801",
     result: "sold in pronto by node script -cm",
@@ -24,6 +25,7 @@ export const tryAgainComment = [
     prontoReceipt: "2602882",
     result: "sold in pronto by node script -cm",
   },
+  */
   {
     magentoOrder: "1000683740",
     prontoReceipt: "2602883",
