@@ -342,18 +342,28 @@ import * as fs from "node:fs";
     );
     // submit the comment
     await magentoPage.click('button[title="Submit Comment"]');
-
     // check if comment was sent successfully
+    await waitTillHTMLRendered(magentoPage);
     await magentoPage.waitForSelector("ul.note-list");
     const comments = await magentoPage.$$eval("div.note-list-comment", (el) => {
-      console.log(el);
-      el.map((comment) => {
+      return el.map((comment) => {
         console.log(comment.innerText);
+        return comment.innerText;
       });
     });
 
-    // this function should return a promise similar to pronto sell func.
     console.log(JSON.stringify(comments));
+
+    //what should this function return? how should we handle errors / make user aware of erros?
+    // e.g. network drops out during selling.
+
+    if (!JSON.stringify(comments).includes(order.prontoReceipt)) {
+      console.log("did not find order comment ");
+      return Promise.reject(
+        `did not find order comments for${order.magentoOrder} `,
+      );
+    }
+    return { ...order, magResult: "comment was made in magento" };
   }
   // FUNCTION CALLS
 
