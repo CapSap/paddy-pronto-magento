@@ -7,7 +7,7 @@
 - sell the order in pronto
 - put the pronto receipt number as a comment in magento
 
-### Challenge
+### Challenges
 
 - How do we tell tell the script which orders to sell?
   - give it a csv of all status 30 orders?
@@ -35,3 +35,5 @@
 
 1. run `npm run build`
 2. run `node build/schedule.js` - this will run the script every 30 mins
+   2a. You can also choose to run the script once only with
+   `npm run once`
