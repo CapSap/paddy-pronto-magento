@@ -4,6 +4,8 @@ import { generateToken } from "authenticator";
 
 import * as fs from "node:fs";
 
+import { tryAgainComment } from "./temp.js";
+
 (async () => {
   // function that takes a screenshot and saves html.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -333,7 +335,8 @@ import * as fs from "node:fs";
 
     await magentoPage.goto(newUrl);
 
-    // Check if comment was added successfully
+    // Check if we have navigated to correct page
+    await waitTillHTMLRendered(magentoPage);
     const magOrderNumberFromPage = await magentoPage.$eval(
       "h1.page-title",
       (el) => {
@@ -426,6 +429,15 @@ import * as fs from "node:fs";
 
   console.log("result of order details array", orderDetails);
 
+  // temp try and put in comments into magento
+  const orderDetailsAfterMagentoComment2 = await runAsyncFuncInSeries(
+    tryAgainComment,
+    inputProntoReceiptIntoMagento,
+  );
+
+  await browser.close();
+  return;
+
   // 4a. Sell a small array and see what the results are
   // array of 1 order .
   const smallArray = orderDetails.slice(0, 2);
@@ -450,7 +462,7 @@ import * as fs from "node:fs";
   // what feedback do i want to give back to the user?
   console.log(
     "auto selling complete. Results: ",
-    orderDetailsAfterMagentoComment,
+    orderDetailsAfterMagentoComment2,
   );
 
   console.log("browser close about to run");
