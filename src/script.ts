@@ -126,10 +126,10 @@ import * as fs from "node:fs";
     const prontoLoginButtonFinal = "#login-button";
     await prontoPage.waitForSelector(prontoLoginButtonFinal);
     await prontoPage.click(prontoLoginButtonFinal);
+
     // return a promise based upon did login succeed and throw if login failed
     try {
       await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
-      console.log("logon to pronto successfully");
     } catch (err) {
       console.error(err);
       return Promise.reject("did not login into pronto");
@@ -160,10 +160,10 @@ import * as fs from "node:fs";
     // i need to check if login worked and return a promise. same as pronto login
 
     try {
-      const salesOrder = "button.folder[name='Sales &Orders']";
-      await prontoPage.waitForSelector(salesOrder);
-    } catch (error) {
-      throw new Error("failed to login into magento");
+      await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
+    } catch (err) {
+      console.error(err);
+      return Promise.reject("did not login into magento");
     }
   }
 
