@@ -126,14 +126,15 @@ import * as fs from "node:fs";
     const prontoLoginButtonFinal = "#login-button";
     await prontoPage.waitForSelector(prontoLoginButtonFinal);
     await prontoPage.click(prontoLoginButtonFinal);
+
     // return a promise based upon did login succeed and throw if login failed
     try {
       await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
-      console.log("logon to pronto successfully");
     } catch (err) {
       console.error(err);
       return Promise.reject("did not login into pronto");
     }
+    return Promise.resolve("pronto login successfully");
   }
 
   async function loginIntoMagento() {
@@ -154,18 +155,15 @@ import * as fs from "node:fs";
       process.env.MAGENTO_PASSWORD as string,
     );
     await magentoPage.click("button.action-login");
-    console.log("finished login");
-    return await magentoPage.waitForNavigation();
-    /*
-    //TODO
-    // i need to check if login worked and return a promise. same as pronto login
 
-      try {
-        await magentoPage.waitForSelector()
-      } catch (error) {
-        throw new Error('failed to login into magento')
-      }
-    */
+    // i need to check if login worked and return a promise. same as pronto login
+    try {
+      await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
+    } catch (err) {
+      console.error(err);
+      return Promise.reject("did not login into magento");
+    }
+    return Promise.resolve("mag logged in");
   }
 
   async function navigateToSellScreen() {
@@ -223,7 +221,9 @@ import * as fs from "node:fs";
 
     // Check if the order in pronto matches order passed as argument
     await prontoPage.waitForNetworkIdle();
+    await waitTillHTMLRendered(prontoPage);
 
+    // be aware: below selector fails intermittently rarely. is there a better selector i could wait for?
     const receiptNoFromPronto = await prontoPage.$eval(
       "div.screen-input",
       (el) => {
@@ -268,7 +268,10 @@ import * as fs from "node:fs";
     await prontoPage.keyboard.press("Escape");
     await prontoPage.waitForNetworkIdle();
 
-    // what should singlesell return?
+    return {
+      ...order,
+      result: "sold in pronto by node script -cm",
+    };
   }
 
   async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
@@ -301,7 +304,8 @@ import * as fs from "node:fs";
       order.magentoOrder,
     );
 
-    await Promise.all([magentoPage.keyboard.press("Enter")]);
+    await magentoPage.keyboard.press("Enter");
+
     await waitTillHTMLRendered(magentoPage);
 
     await Promise.all([
@@ -338,18 +342,28 @@ import * as fs from "node:fs";
     );
     // submit the comment
     await magentoPage.click('button[title="Submit Comment"]');
-
     // check if comment was sent successfully
+    await waitTillHTMLRendered(magentoPage);
     await magentoPage.waitForSelector("ul.note-list");
     const comments = await magentoPage.$$eval("div.note-list-comment", (el) => {
-      console.log(el);
-      el.map((comment) => {
+      return el.map((comment) => {
         console.log(comment.innerText);
+        return comment.innerText;
       });
     });
 
-    // this function should return a promise similar to pronto sell func.
     console.log(JSON.stringify(comments));
+
+    //what should this function return? how should we handle errors / make user aware of erros?
+    // e.g. network drops out during selling.
+
+    if (!JSON.stringify(comments).includes(order.prontoReceipt)) {
+      console.log("did not find order comment ");
+      return Promise.reject(
+        `did not find order comments for${order.magentoOrder} `,
+      );
+    }
+    return { ...order, magResult: "comment was made in magento" };
   }
   // FUNCTION CALLS
 
@@ -370,8 +384,10 @@ import * as fs from "node:fs";
   });
 
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
-  await retry(loginIntoPronto, { retries: 2, retryInterval: 2000 });
-  await retry(loginIntoMagento, { retries: 2, retryInterval: 2000 });
+  await Promise.all([
+    retry(loginIntoMagento, { retries: 2, retryInterval: 2000 }),
+    retry(loginIntoPronto, { retries: 2, retryInterval: 2000 }),
+  ]);
 
   // 2. Navigate to status 30
   await navigateToSellScreen();
@@ -421,12 +437,16 @@ import * as fs from "node:fs";
   );
   // 4c. and then that's the end of the script?
   // what feedback do i want to give back to the user?
+  console.log(
+    "auto selling complete. Results: ",
+    orderDetailsAfterMagentoComment,
+  );
 
   console.log("browser close about to run");
   await browser.close();
   // just for fun
   console.log("selling complete");
-  await new Promise((r) => setTimeout(r, 2000));
+  await new Promise((r) => setTimeout(r, 4000));
   console.log(`xkkxxxkxxxkkxkkxkkxxxkkxxkl.   .';;;,,;:'..,:::okdodddkkkkkOXWWMMWKxdooxxxddxxxxxxxkkkOOkxdxkkddxkxx
   xkxxxxxxxxxkxkxxkxxxkkxxxkl.....,::,,'';'..,:llxkddddxkOOO0KNWWMMMNxoddxxxddxxdxxxxkkkkOkxddxxddxxxx
   xxxdxxxxdxxkkkkxkxxxxxxxxxd;...';;'.........,cldxooolloodxkOOKXNNWW0xKKkxxddxxdddxxkkxxkxxxdxxxxxxxd
