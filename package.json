@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc --watch --preserveWatchOutput",
-    "build": "tsc "
+    "build": "rm screenshots/*; tsc ",
+    "scheduler": "node build/scheduler.js",
+    "once": "node build/runOnce.js"
   },
   "author": "",
   "license": "ISC",
