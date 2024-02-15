@@ -9,7 +9,7 @@ Overall goal is to automate a tedious admin process that invovles 2 seperate sys
 - Complete the selling process in pronto
 - After selling, put the pronto receipt number as a comment in magento within the order page
 
-### Challenge
+### Challenges
 
 A big challenge were the intermittant failings, and pupateer's waitForNetworkIdle() and waitForNavigation() were not enough to ensure that the DOM was fully loaded.
 
@@ -28,9 +28,17 @@ I also had a little trouble trying to run an async function, passing each elemen
 ## How to install and run
 
 1. pull the repo
-2. npm install
-3. run `npm run dev` (this will run the tsc on all files in src)
-4. run the .js file inside the build folder (you will need relevant credentials in .env)
+2. run `npm install`
+3. you will need to create a .env file with all relevant credentials
+4. run `npm run dev` (this will run the tsc (typescript compiler) on all files in src and watch for changes)
+5. run `npm run once` to see the script in action
+
+## How to run script in 'production'
+
+1. run `npm run build`
+2. run `node build/schedule.js` - this will run the script every 30 mins
+   2a. You can also choose to run the script once only with
+   `npm run once`
 
 ## What's next?
 
