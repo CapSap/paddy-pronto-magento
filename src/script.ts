@@ -442,7 +442,7 @@ import * as fs from "node:fs";
   console.log("small array", smallArray);
 
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
-    smallArray,
+    orderDetails,
     sellSingleOrder,
   );
 
