@@ -318,6 +318,11 @@ import { tryAgainComment } from "./temp.js";
     );
 
     await magentoPage.keyboard.press("Enter");
+    // how to wait for spinner to be display none
+    await magentoPage.waitForSelector("div.admin__data-grid-loading-mask", {
+      hidden: true,
+    });
+    console.log("did we make it here? ");
 
     await waitTillHTMLRendered(magentoPage);
 
@@ -357,6 +362,8 @@ import { tryAgainComment } from "./temp.js";
     // submit the comment
     await magentoPage.click('button[title="Submit Comment"]');
     // check if comment was sent successfully
+    await magentoPage.waitForSelector("div.loading-mask", { hidden: true });
+
     await waitTillHTMLRendered(magentoPage);
     await magentoPage.waitForSelector("ul.note-list");
     const comments = await magentoPage.$$eval("div.note-list-comment", (el) => {
