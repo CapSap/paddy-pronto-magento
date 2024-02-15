@@ -268,7 +268,10 @@ import * as fs from "node:fs";
     await prontoPage.keyboard.press("Escape");
     await prontoPage.waitForNetworkIdle();
 
-    // what should singlesell return?
+    return {
+      ...order,
+      result: "sold in pronto by node script -cm",
+    };
   }
 
   async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
