@@ -304,7 +304,8 @@ import * as fs from "node:fs";
       order.magentoOrder,
     );
 
-    await Promise.all([magentoPage.keyboard.press("Enter")]);
+    await magentoPage.keyboard.press("Enter");
+
     await waitTillHTMLRendered(magentoPage);
 
     await Promise.all([
