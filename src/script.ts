@@ -94,12 +94,6 @@ import * as fs from "node:fs";
     console.log("loginto promto starting");
     // nav to pronto login screen and enter relevant deets
     await prontoPage.goto("https://pronto.paddypallin.com.au/");
-    const contentJustAfterLoad = await prontoPage.content();
-    await saveContent(
-      prontoPage,
-      contentJustAfterLoad,
-      "just-after-intial-page-load.png",
-    );
     // sometimes page shows the verification page and the login fails. not sure why
     // below will try to find the login input element and return a rejected promise so that retry can run
     try {
@@ -144,8 +138,6 @@ import * as fs from "node:fs";
     await magentoPage.goto(
       `https://www.paddypallin.com.au/agpallin_20/admin/dashboard/index/key/${process.env.MAG_KEY}`,
     );
-    const newMagePage = await magentoPage.content();
-    await saveContent(magentoPage, newMagePage, "mag-page-just-loaded");
 
     //login into magento
     await magentoPage.waitForSelector("#username");
@@ -202,10 +194,6 @@ import * as fs from "node:fs";
     await prontoPage.keyboard.type("30");
     await pressEnterManyTimes(8);
     await prontoPage.waitForSelector("td.data-tbody");
-
-    // save page snapshot as status30
-    const status30 = await prontoPage.content();
-    await saveContent(prontoPage, status30, "status30");
   }
 
   type order = {
@@ -231,8 +219,6 @@ import * as fs from "node:fs";
 
     // Check if the order in pronto matches order passed as argument
     await prontoPage.waitForNetworkIdle();
-    const whyDidSelectorFail = await prontoPage.content();
-    await saveContent(prontoPage, whyDidSelectorFail, "whyDidSelectorFail");
 
     const receiptNoFromPronto = await prontoPage.$eval(
       "div.screen-input",
@@ -250,25 +236,12 @@ import * as fs from "node:fs";
     await prontoPage.keyboard.type("70");
     await pressEnterManyTimes(3);
 
-    // await new Promise((r) => setTimeout(r, 60000));
-    // below screenshotshould show select printer screen
-    const doubleCheck = await prontoPage.content();
-    await saveContent(prontoPage, doubleCheck, "doubleCheck");
-
     // select external-email as the printer
     const externalEmail = await prontoPage.waitForSelector(
       `::-p-text("external-email")`,
     );
     await externalEmail?.click();
 
-    // below screenshot should show external-email selected
-    // await new Promise((r) => setTimeout(r, 60000));
-    const externalEmailSelected = await prontoPage.content();
-    await saveContent(
-      prontoPage,
-      externalEmailSelected,
-      "externalEmailSelected",
-    );
     // not sure if i need this waitfor net idle
     await prontoPage.waitForNetworkIdle();
     // print and email the receipt to customer
@@ -290,13 +263,6 @@ import * as fs from "node:fs";
     console.log("sell single in pronto finished for", order);
     await prontoPage.keyboard.press("Escape");
     await prontoPage.waitForNetworkIdle();
-
-    const pageAferEscPress = await prontoPage.content();
-    saveContent(prontoPage, pageAferEscPress, "pageAferEscPress");
-    return {
-      ...order,
-      result: "sold successfully by node script -cm",
-    };
   }
 
   async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
@@ -329,13 +295,6 @@ import * as fs from "node:fs";
       order.magentoOrder,
     );
 
-    const magScreenAfterMagInput = await magentoPage.content();
-    await saveContent(
-      magentoPage,
-      magScreenAfterMagInput,
-      "magScreenAfterMagInput",
-    );
-
     // so having a timeout of 1 min works.
     // what is happening is that when 2nd item in the array is running-
     // the page is not waiting for the DOM to fully load before grabbing the URL
@@ -362,13 +321,6 @@ import * as fs from "node:fs";
     ]);
     await waitTillHTMLRendered(magentoPage);
 
-    const magPageAfterHTMLRenderedFunction = await magentoPage.content();
-    await saveContent(
-      magentoPage,
-      magPageAfterHTMLRenderedFunction,
-      "magPageAfterHTMLRenderedFunction",
-    );
-
     // /*
     await Promise.all([
       magentoPage.waitForSelector("tr.data-row"),
@@ -390,13 +342,7 @@ import * as fs from "node:fs";
     // e.g. number from page  1000683431 number passed in as argument 1000683428
     // and the array / was is the dummy array`
 
-    const checkSearchResults = await magentoPage.content();
-    await saveContent(magentoPage, checkSearchResults, "check-search-results");
-
     await magentoPage.goto(newUrl);
-
-    const checkingIfWereontherightPage = await magentoPage.content();
-    await saveContent(magentoPage, checkingIfWereontherightPage, "check");
 
     // then i should do a check to see if comment was put in successfully.
     const magOrderNumberFromPage = await magentoPage.$eval(
@@ -436,10 +382,6 @@ import * as fs from "node:fs";
 
     // this function should return a promise similar to pronto sell func.
     console.log(JSON.stringify(comments));
-
-    // await await new Promise((r) => setTimeout(r, 60000));
-    const firstMagScreen = await magentoPage.content();
-    await saveContent(magentoPage, firstMagScreen, "firstMageScreen");
   }
   // FUNCTION CALLS
 
@@ -523,8 +465,6 @@ import * as fs from "node:fs";
 
   prontoSellResult.forEach(async (order) => inputProntoReceiptIntoMagento(await order) )
 */
-  const latestContent = await prontoPage.content();
-  await saveContent(prontoPage, latestContent, "last");
   console.log("browser close about to run");
   await browser.close();
   // just for fun
