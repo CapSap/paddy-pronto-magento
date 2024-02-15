@@ -124,7 +124,7 @@ import * as fs from "node:fs";
     await prontoPage.click(prontoLoginButton);
     // enter 2 factor and login
     const otp = generateToken(process.env.PRONTO_KEY as string);
-    await prontoPage.type("#prompts", otp);
+    await prontoPage.type("input#prompts", otp);
     const prontoLoginButtonFinal = "#login-button";
     await prontoPage.waitForSelector(prontoLoginButtonFinal);
     await prontoPage.click(prontoLoginButtonFinal);
