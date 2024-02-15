@@ -134,6 +134,7 @@ import * as fs from "node:fs";
       console.error(err);
       return Promise.reject("did not login into pronto");
     }
+    return Promise.resolve("pronto login successfully");
   }
 
   async function loginIntoMagento() {
@@ -154,17 +155,15 @@ import * as fs from "node:fs";
       process.env.MAGENTO_PASSWORD as string,
     );
     await magentoPage.click("button.action-login");
-    console.log("finished login");
-    await magentoPage.waitForNavigation();
-    //TODO
-    // i need to check if login worked and return a promise. same as pronto login
 
+    // i need to check if login worked and return a promise. same as pronto login
     try {
       await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
     } catch (err) {
       console.error(err);
       return Promise.reject("did not login into magento");
     }
+    return Promise.resolve("mag logged in");
   }
 
   async function navigateToSellScreen() {
@@ -369,10 +368,10 @@ import * as fs from "node:fs";
   });
 
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
-  await retry(loginIntoPronto, { retries: 2, retryInterval: 2000 });
-  await browser.close();
-  return;
-  await retry(loginIntoMagento, { retries: 2, retryInterval: 2000 });
+  await Promise.all([
+    retry(loginIntoMagento, { retries: 2, retryInterval: 2000 }),
+    retry(loginIntoPronto, { retries: 2, retryInterval: 2000 }),
+  ]);
 
   // 2. Navigate to status 30
   await navigateToSellScreen();
