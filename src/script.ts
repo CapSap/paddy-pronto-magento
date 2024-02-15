@@ -267,6 +267,8 @@ import * as fs from "node:fs";
     console.log("sell single in pronto finished for", order);
     await prontoPage.keyboard.press("Escape");
     await prontoPage.waitForNetworkIdle();
+
+    // what should singlesell return?
   }
 
   async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
@@ -299,38 +301,13 @@ import * as fs from "node:fs";
       order.magentoOrder,
     );
 
-    // so having a timeout of 1 min works.
-    // what is happening is that when 2nd item in the array is running-
-    // the page is not waiting for the DOM to fully load before grabbing the URL
-
-    // so 2 things: wait for the input clear to happen?
-    // or press enter and then wait for dom.
-
-    // i think i can waitforFunction, and run a function in the browser to check if domContentLoaded?
-    // but how exactly are the search results being loaded? if async, then the above wont work.
-
-    // a network call is running. after pressing enter. but page timesout waiting for idle
-
-    // what i can do is wait until the right result is shown
-    // so i need a function that runs in the page to select the first TD and then check if it equals the
-
-    // or steal that SO code that waits for DOM fully loaded
-
-    await Promise.all([
-      magentoPage.keyboard.press("Enter"),
-
-      // wait for result but also maybe i should try clicking
-      // new Promise((r) => setTimeout(r, 60000)),
-      // magentoPage.waitForNetworkIdle({ timeout: 0 }),
-    ]);
+    await Promise.all([magentoPage.keyboard.press("Enter")]);
     await waitTillHTMLRendered(magentoPage);
 
-    // /*
     await Promise.all([
       magentoPage.waitForSelector("tr.data-row"),
       magentoPage.waitForSelector("a.action-menu-item"),
     ]);
-    // */
     const newUrl = await magentoPage.$eval("a.action-menu-item", (el) => {
       console.log(`this is the order being navigated to: ${el}`);
       return el.getAttribute("href");
@@ -339,27 +316,14 @@ import * as fs from "node:fs";
       throw new Error("could not get URL from mag order");
     }
 
-    // I HAVE NO IDEA WHY IT'S NAVING TO THE WRONG PAGE SOMETIMES.
-    // what is going on?
-    // also maybe as well i could find a better method for naving to the right order page
-
-    // e.g. number from page  1000683431 number passed in as argument 1000683428
-    // and the array / was is the dummy array`
-
     await magentoPage.goto(newUrl);
 
-    // then i should do a check to see if comment was put in successfully.
+    // Check if comment was added successfully
     const magOrderNumberFromPage = await magentoPage.$eval(
       "h1.page-title",
       (el) => {
         return el.innerText.replace("#", "");
       },
-    );
-    console.log(
-      "number from page ",
-      magOrderNumberFromPage,
-      "number passed in as argument",
-      order.magentoOrder,
     );
     if (magOrderNumberFromPage !== order.magentoOrder) {
       throw new Error(
@@ -458,17 +422,6 @@ import * as fs from "node:fs";
   // 4c. and then that's the end of the script?
   // what feedback do i want to give back to the user?
 
-  /*
-  // i want to iterate through orderDetails and save a new array with the result
-  const prontoSellResult = orderDetails.map(async (order) => {
-    console.log("pronto sell attempt for", order);
-    return await sellSingleOrder(order);
-  });
-
-  console.log(prontoSellResult);
-
-  prontoSellResult.forEach(async (order) => inputProntoReceiptIntoMagento(await order) )
-*/
   console.log("browser close about to run");
   await browser.close();
   // just for fun
