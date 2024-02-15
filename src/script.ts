@@ -303,8 +303,6 @@ import { tryAgainComment } from "./temp.js";
     } catch {
       console.log("no filters to remove");
     }
-
-    console.log("clear input");
     // clear input
     const searchInput = await magentoPage.$(
       "input.admin__control-text.data-grid-search-control",
@@ -330,18 +328,13 @@ import { tryAgainComment } from "./temp.js";
       magentoPage.waitForSelector("tr.data-row"),
       magentoPage.waitForSelector("a.action-menu-item"),
     ]);
-    const newUrl = await magentoPage.$eval("a.action-menu-item", (el) => {
-      console.log(`this is the order being navigated to: ${el}`);
-      return el.getAttribute("href");
-    });
-    if (!newUrl) {
-      throw new Error("could not get URL from mag order");
-    }
-
-    await magentoPage.goto(newUrl);
+    await Promise.all([
+      magentoPage.click("td > a"),
+      magentoPage.waitForNavigation(),
+    ]);
 
     // Check if we have navigated to correct page
-    await waitTillHTMLRendered(magentoPage);
+
     const magOrderNumberFromPage = await magentoPage.$eval(
       "h1.page-title",
       (el) => {
@@ -435,15 +428,6 @@ import { tryAgainComment } from "./temp.js";
   });
 
   console.log("result of order details array", orderDetails);
-
-  // temp try and put in comments into magento
-  const orderDetailsAfterMagentoComment2 = await runAsyncFuncInSeries(
-    tryAgainComment,
-    inputProntoReceiptIntoMagento,
-  );
-
-  await browser.close();
-  return;
 
   // 4a. Sell a small array and see what the results are
   // array of 1 order .
