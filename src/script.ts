@@ -78,7 +78,7 @@ import * as fs from "node:fs";
       }
 
       lastHTMLSize = currentHTMLSize;
-      await page.waitForTimeout(checkDurationMsecs);
+      new Promise((r) => setTimeout(r, checkDurationMsecs));
     }
   };
 
@@ -304,7 +304,6 @@ import * as fs from "node:fs";
   }
 
   async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
-    console.log("sanity check");
     console.log("input recept in mag func running on ", order);
     // nav to order search page
     await magentoPage.goto(
@@ -333,14 +332,57 @@ import * as fs from "node:fs";
       "input.admin__control-text.data-grid-search-control",
       order.magentoOrder,
     );
-    await magentoPage.keyboard.press("Enter");
 
-    await magentoPage.waitForSelector("tr.data-row");
-    await magentoPage.waitForSelector("a.action-menu-item");
-
-    const newUrl = await magentoPage.$eval("a.action-menu-item", (el) =>
-      el.getAttribute("href"),
+    const magScreenAfterMagInput = await magentoPage.content();
+    await saveContent(
+      magentoPage,
+      magScreenAfterMagInput,
+      "magScreenAfterMagInput",
     );
+
+    // so having a timeout of 1 min works.
+    // what is happening is that when 2nd item in the array is running-
+    // the page is not waiting for the DOM to fully load before grabbing the URL
+
+    // so 2 things: wait for the input clear to happen?
+    // or press enter and then wait for dom.
+
+    // i think i can waitforFunction, and run a function in the browser to check if domContentLoaded?
+    // but how exactly are the search results being loaded? if async, then the above wont work.
+
+    // a network call is running. after pressing enter. but page timesout waiting for idle
+
+    // what i can do is wait until the right result is shown
+    // so i need a function that runs in the page to select the first TD and then check if it equals the
+
+    // or steal that SO code that waits for DOM fully loaded
+
+    await Promise.all([
+      magentoPage.keyboard.press("Enter"),
+
+      // wait for result but also maybe i should try clicking
+      // new Promise((r) => setTimeout(r, 60000)),
+      // magentoPage.waitForNetworkIdle({ timeout: 0 }),
+    ]);
+    await waitTillHTMLRendered(magentoPage);
+
+    const magPageAfterHTMLRenderedFunction = await magentoPage.content();
+    await saveContent(
+      magentoPage,
+      magPageAfterHTMLRenderedFunction,
+      "magPageAfterHTMLRenderedFunction",
+    );
+
+    // /*
+    await Promise.all([
+      magentoPage.waitForSelector("tr.data-row"),
+      magentoPage.waitForSelector("a.action-menu-item"),
+    ]);
+    // */
+    const newUrl = await magentoPage.$eval("a.action-menu-item", (el) => {
+      console.log(`this is the order being navigated to: ${el}`);
+      return el.getAttribute("href");
+    });
     if (!newUrl) {
       throw new Error("could not get URL from mag order");
     }
@@ -399,7 +441,7 @@ import * as fs from "node:fs";
     // this function should return a promise similar to pronto sell func.
     console.log(JSON.stringify(comments));
 
-    await await new Promise((r) => setTimeout(r, 60000));
+    // await await new Promise((r) => setTimeout(r, 60000));
     const firstMagScreen = await magentoPage.content();
     await saveContent(magentoPage, firstMagScreen, "firstMageScreen");
   }
@@ -424,15 +466,6 @@ import * as fs from "node:fs";
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
   await retry(loginIntoPronto, { retries: 2, retryInterval: 2000 });
   await retry(loginIntoMagento, { retries: 2, retryInterval: 2000 });
-
-  // to be removed
-  // saving pronto screen after login
-  const pageContent = await prontoPage.content();
-  await saveContent(
-    prontoPage,
-    pageContent,
-    "pronto-screen-just-before-button-folder",
-  );
 
   // 2. Navigate to status 30
   await navigateToSellScreen();
