@@ -84,8 +84,10 @@ import * as fs from "node:fs";
   };
 
   const runAsyncFuncInSeries = async (
-    array: [],
-    fun: (order: object) => void,
+    array: order[] | orderWithSellResult[],
+    fun: (
+      order: order | orderWithSellResult,
+    ) => Promise<orderWithSellResult> | Promise<orderWithMagCommentResult>,
   ) => {
     const results = [];
     for (const order of array) {
@@ -207,6 +209,7 @@ import * as fs from "node:fs";
     prontoReceipt: string;
     result: string;
   };
+  type orderWithMagCommentResult = orderWithSellResult & { magResult: string };
   async function sellSingleOrder(order: order): Promise<orderWithSellResult> {
     // select td with correct mag order number
     console.log("sell single order fun running for", order);
@@ -274,7 +277,15 @@ import * as fs from "node:fs";
     };
   }
 
-  async function inputProntoReceiptIntoMagento(order: orderWithSellResult) {
+  async function inputProntoReceiptIntoMagento(
+    order: orderWithSellResult,
+  ): Promise<orderWithMagCommentResult> {
+    if (!Object.prototype.hasOwnProperty.call(order, "result")) {
+      throw new Error(
+        "wrong argument passed as parameter to inputProntoReceiptIntoMagento function",
+      );
+    }
+
     console.log("input recept in mag func running on ", order);
     // nav to order search page
     await magentoPage.goto(
