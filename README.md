@@ -37,9 +37,12 @@ I also had a little trouble trying to run an async function, passing each elemen
 
 1. run `npm run build`
 2. run `node build/schedule.js` - this will run the script every 30 mins
-   2a. You can also choose to run the script once only with
-   `npm run once`
+   - You can also choose to run the script once only with
+     `npm run once`
 
 ## What's next?
 
-- Run the script every 30 mins or so using some sort of scheduler (could this be a simple while loop?)
+- [x] Run the script every 30 mins or so using some sort of scheduler (could this be a simple while loop?)
+- [ ] Check for orders that have not appeared in pronto
+- [ ] Handleing of errors that I have not come accross yet
+- [ ] e.g. network errors at specific points
