@@ -227,6 +227,11 @@ export const prontoSellMagCommentScript = async () => {
     await waitTillHTMLRendered(prontoPage);
 
     // be aware: below selector fails intermittently rarely. is there a better selector i could wait for?
+    // why is it failing?
+
+    const screenInputFail = await prontoPage.content();
+    await saveContent(prontoPage, screenInputFail, "screenInputFail");
+
     const receiptNoFromPronto = await prontoPage.$eval(
       "div.screen-input",
       (el) => {
@@ -435,11 +440,12 @@ export const prontoSellMagCommentScript = async () => {
 
   console.log("result of order details array", orderDetails);
 
-  // 4a. Sell a small array and see what the results are
-  // array of 1 order .
-  const smallArray = orderDetails.slice(0, 3);
-
-  console.log("small array", smallArray);
+  // log order numbers for easy mag search
+  const orderNumbers = orderDetails.reduce(
+    (acc, curr) => `${acc} ${curr.magentoOrder}`,
+    "",
+  );
+  console.log(orderNumbers);
 
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
     orderDetails,
