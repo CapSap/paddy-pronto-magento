@@ -59,7 +59,7 @@ export const prontoSellMagCommentScript = async () => {
       const bodyHTMLSize = await page.evaluate(
         () => document.body.innerHTML.length,
       );
-
+      /*
       console.log(
         "last: ",
         lastHTMLSize,
@@ -68,13 +68,13 @@ export const prontoSellMagCommentScript = async () => {
         " body html size: ",
         bodyHTMLSize,
       );
-
+*/
       if (lastHTMLSize != 0 && currentHTMLSize == lastHTMLSize)
         countStableSizeIterations++;
       else countStableSizeIterations = 0; //reset the counter
 
       if (countStableSizeIterations >= minStableSizeIterations) {
-        console.log("Page rendered fully..");
+        // console.log("Page rendered fully..");
         break;
       }
 
