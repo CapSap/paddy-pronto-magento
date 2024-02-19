@@ -353,6 +353,7 @@ export const prontoSellMagCommentScript = async () => {
       },
     );
     if (magOrderNumberFromPage !== order.magentoOrder) {
+      console.log(orderNumbers);
       throw new Error(
         "script is on the wrong page! error somewhere when navigating to the order detail page",
       );
@@ -401,12 +402,16 @@ export const prontoSellMagCommentScript = async () => {
   await magentoPage.setViewport({ width: 3840, height: 2160 });
 
   // enable console logging on prontoPage
+
+  /*
   prontoPage.on("console", (message) => {
     console.log(`pronto Message: ${message.text()}`);
   });
   magentoPage.on("console", (message) => {
     console.log(`magneot Message: ${message.text()}`);
   });
+
+  */
 
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
   await Promise.all([
@@ -445,7 +450,7 @@ export const prontoSellMagCommentScript = async () => {
     (acc, curr) => `${acc} ${curr.magentoOrder}`,
     "",
   );
-  console.log(orderNumbers);
+  // console.log(orderNumbers);
 
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
     orderDetails,
