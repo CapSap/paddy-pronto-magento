@@ -333,8 +333,27 @@ export const prontoSellMagCommentScript = async () => {
 
     await waitTillHTMLRendered(magentoPage);
 
+    // i need a better wait.as another idea i could extract out this function and try again until we get to the right page
+    // /*
+    // wait for the first element in the search results table to equal the search input
+    try {
+      await magentoPage.waitForSelector(
+        `::-p-xpath(/html/body/div[2]/main/div[2]/div/div/div/div[4]/table/tbody/tr[1]/td[2]/div[contains(text(),"${order.magentoOrder}")])`,
+      );
+    } catch (err) {
+      console.log("did not find the element via xpath");
+      console.error(err);
+      // throw new Error("did not wait for page navigation");
+    }
+    // */
     const screenBeforeClick = await magentoPage.content();
     await saveContent(magentoPage, screenBeforeClick, "screenBeforeClick");
+
+    // should find a better way of clicking?
+    // click on the row that has the order number?
+    // a click on any element in the row will take user to the order page?
+    // how do i select the parent element based upon child innerText,
+    // then click on the a tag in that parent
 
     await Promise.all([
       magentoPage.click("td > a"),
@@ -459,7 +478,7 @@ export const prontoSellMagCommentScript = async () => {
   );
   // console.log(orderNumbers);
 
-  const smallArray = orderDetails.slice(0, 3);
+  const smallArray = orderDetails.slice(0, 22);
 
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
     smallArray,
