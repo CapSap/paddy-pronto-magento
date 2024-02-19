@@ -60,7 +60,6 @@ export const prontoSellMagCommentScript = async () => {
       const bodyHTMLSize = await page.evaluate(
         () => document.body.innerHTML.length,
       );
-      /*
       console.log(
         "last: ",
         lastHTMLSize,
