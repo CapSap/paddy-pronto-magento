@@ -220,6 +220,7 @@ export const prontoSellMagCommentScript = async () => {
       throw new Error("could not find order");
     }
     await magOrder.click();
+    await prontoPage.waitForNetworkIdle();
     await prontoPage.keyboard.press("h");
 
     // Check if the order in pronto matches order passed as argument
@@ -478,17 +479,14 @@ export const prontoSellMagCommentScript = async () => {
   );
   // console.log(orderNumbers);
 
-  const smallArray = orderDetails.slice(0, 22);
+  const smallArray = orderDetails.slice(0, 4);
 
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
     smallArray,
     sellSingleOrder,
   );
 
-  console.log(
-    "this should be an array of orders with result key",
-    orderDetailsAfterProntoSelling,
-  );
+  console.log("all pronto selling for this batch completed successfully");
   // // 4b. Get the result of above and update magento. inputting in magento will throw an error if something wrong happens
   const orderDetailsAfterMagentoComment = await runAsyncFuncInSeries(
     orderDetailsAfterProntoSelling,
