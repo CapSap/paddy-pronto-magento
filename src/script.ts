@@ -56,6 +56,7 @@ export const prontoSellMagCommentScript = async () => {
       const html = await page.content();
       const currentHTMLSize = html.length;
 
+      /*
       const bodyHTMLSize = await page.evaluate(
         () => document.body.innerHTML.length,
       );
