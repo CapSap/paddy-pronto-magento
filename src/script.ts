@@ -443,6 +443,13 @@ export const prontoSellMagCommentScript = async () => {
     return rowReturn;
   });
 
+  // stop script if there are no orders to sell
+  if (orderDetails.length === -1) {
+    console.log("no orders to sell!");
+    await browser.close();
+    return;
+  }
+
   console.log("result of order details array", orderDetails);
 
   // log order numbers for easy mag search
