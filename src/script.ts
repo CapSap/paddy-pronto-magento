@@ -452,8 +452,10 @@ export const prontoSellMagCommentScript = async () => {
   );
   // console.log(orderNumbers);
 
+  const smallArray = orderDetails.slice(0, 3);
+
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
-    orderDetails,
+    smallArray,
     sellSingleOrder,
   );
 
