@@ -15,9 +15,11 @@ import loginIntoMagento from "../functions/loginIntoMagento.js";
     };
   });
 
-  const justOneOrder = correctFormat.slice(0, 5);
+  const justOneOrder = correctFormat.slice(0, 25);
 
   console.log(justOneOrder);
+
+  console.log(oldOrders.length);
 
   // 0. Launch the browser and open 2 new blank pages
   const browser = await puppeteer.launch();
