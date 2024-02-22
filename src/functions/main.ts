@@ -8,6 +8,7 @@ import navigateToSellScreen from "./navigateToSellScreen.js";
 import waitAndDisplayNeo from "./waitAndDisplayNeo.js";
 import sellSingleOrder from "./sellSingleOrder.js";
 import inputProntoReceiptIntoMagento from "./inputProntoReceiptIntoMagento.js";
+import clearSearchFilters from "./clearSearchFilters.js";
 
 export const prontoSellMagCommentScript = async () => {
   // FUNCTION CALLS
@@ -95,6 +96,10 @@ export const prontoSellMagCommentScript = async () => {
 
   console.log("all pronto selling for this batch completed successfully");
   // // 4b. Get the result of above and update magento. inputting in magento will throw an error if something wrong happens
+
+  // clear the search filters once before runnign loop
+  await clearSearchFilters(magentoPage);
+
   const orderDetailsAfterMagentoComment = await runAsyncFuncInSeries(
     orderDetailsAfterProntoSelling,
     magentoPage,
