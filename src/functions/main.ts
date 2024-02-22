@@ -1,7 +1,6 @@
 import puppeteer from "puppeteer";
-import { retry, runAsyncFuncInSeries } from "./utils.js";
+import { getOrders, retry, runAsyncFuncInSeries } from "./utils.js";
 
-import type { orderDetails } from "../types.js";
 import loginIntoMagento from "./loginIntoMagento.js";
 import loginIntoPronto from "./loginIntoPronto.js";
 import navigateToSellScreen from "./navigateToSellScreen.js";
@@ -22,17 +21,6 @@ export const prontoSellMagCommentScript = async () => {
   await prontoPage.setViewport({ width: 3840, height: 2160 });
   await magentoPage.setViewport({ width: 3840, height: 2160 });
 
-  // enable console logging on prontoPage
-  /*
-  prontoPage.on("console", (message) => {
-    console.log(`pronto Message: ${message.text()}`);
-  });
-  magentoPage.on("console", (message) => {
-    console.log(`magneot Message: ${message.text()}`);
-  });
-
-  */
-
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
   await Promise.all([
     retry(() => loginIntoMagento(magentoPage), {
@@ -49,24 +37,7 @@ export const prontoSellMagCommentScript = async () => {
   await navigateToSellScreen(prontoPage);
 
   // 3. Extract out all of the pronto numbers and magento order number, and put into an array of objects.
-  const orderDetails = await prontoPage.$$eval("tbody > tr", (tr) => {
-    const rowReturn = tr.reduce((acc, curr) => {
-      if (curr.querySelectorAll("td")[2].innerText === "") {
-        return acc;
-      } else {
-        return [
-          ...acc,
-          {
-            // when the results first come through, the screen is small and only what is visible to the eye is in the DOM. to see more orders we'd need to scroll
-            magentoOrder: curr.querySelectorAll("td")[2].innerText,
-            prontoReceipt: curr.querySelectorAll("td")[1].innerText,
-          },
-        ];
-      }
-    }, [] as orderDetails);
-
-    return rowReturn;
-  });
+  const orderDetails = await getOrders(prontoPage);
 
   // stop script if there are no orders to sell
   if (orderDetails.length === -1) {
@@ -109,7 +80,7 @@ export const prontoSellMagCommentScript = async () => {
   // what feedback do i want to give back to the user?
   console.log(
     "auto selling complete. Results: ",
-    // orderDetailsAfterMagentoComment,
+    orderDetailsAfterMagentoComment,
   );
 
   console.log("browser close about to run");

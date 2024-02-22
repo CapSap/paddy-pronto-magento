@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import { Page } from "puppeteer";
 import {
   order,
+  orderDetails,
   orderWithMagCommentResult,
   orderWithSellResult,
 } from "../types.js";
@@ -108,3 +109,31 @@ export const runAsyncFuncInSeries = async (
 
   return results;
 };
+
+// enable console logging from the headless chrome browser
+export function enableLogging(page: Page) {
+  page.on("console", (message) => {
+    console.log(`pronto Message: ${message.text()}`);
+  });
+}
+
+export async function getOrders(page: Page): Promise<orderDetails> {
+  return await page.$$eval("tbody > tr", (tr) => {
+    const rowReturn = tr.reduce((acc, curr) => {
+      if (curr.querySelectorAll("td")[2].innerText === "") {
+        return acc;
+      } else {
+        return [
+          ...acc,
+          {
+            // when the results first come through, the screen is small and only what is visible to the eye is in the DOM. to see more orders we'd need to scroll
+            magentoOrder: curr.querySelectorAll("td")[2].innerText,
+            prontoReceipt: curr.querySelectorAll("td")[1].innerText,
+          },
+        ];
+      }
+    }, [] as orderDetails);
+
+    return rowReturn;
+  });
+}
