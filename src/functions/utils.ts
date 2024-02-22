@@ -89,14 +89,22 @@ export const waitTillHTMLRendered = async (page: Page, timeout = 30000) => {
 
 export const runAsyncFuncInSeries = async (
   array: order[] | orderWithSellResult[],
+  page: Page,
   fun: (
     order: order | orderWithSellResult,
     page: Page,
   ) => Promise<orderWithSellResult> | Promise<orderWithMagCommentResult>,
 ) => {
   const results = [];
-  for (const order of array) {
-    results.push(await fun(order, page));
+  try {
+    for (const order of array) {
+      results.push(await fun(order, page));
+    }
+  } catch (err) {
+    console.log("problem selling somewhere");
+    console.log(array);
+    console.error(err);
   }
+
   return results;
 };
