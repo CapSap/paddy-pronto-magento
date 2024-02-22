@@ -16,7 +16,7 @@ import clearSearchFilters from "../functions/clearSearchFilters.js";
     };
   });
 
-  const justOneOrder = correctFormat.slice(59);
+  const justOneOrder = correctFormat.slice(176);
 
   console.log(justOneOrder);
 
