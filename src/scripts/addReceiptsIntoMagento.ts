@@ -15,7 +15,7 @@ import loginIntoMagento from "../functions/loginIntoMagento.js";
     };
   });
 
-  const justOneOrder = correctFormat.slice(0, 25);
+  const justOneOrder = correctFormat.slice(25);
 
   console.log(justOneOrder);
 
