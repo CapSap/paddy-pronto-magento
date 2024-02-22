@@ -14,6 +14,7 @@ import type {
   orderWithMagCommentResult,
   orderWithSellResult,
 } from "./types.js";
+import loginIntoMagento from "./functions/loginIntoMagento.js";
 
 export const prontoSellMagCommentScript = async () => {
   async function loginIntoPronto() {
@@ -57,35 +58,6 @@ export const prontoSellMagCommentScript = async () => {
       return Promise.reject("did not login into pronto");
     }
     return Promise.resolve("pronto login successfully");
-  }
-
-  async function loginIntoMagento() {
-    console.log("login to magento starting");
-    // Navigate to magneto
-    await magentoPage.goto(
-      `https://www.paddypallin.com.au/agpallin_20/admin/dashboard/index/key/${process.env.MAG_KEY}`,
-    );
-
-    //login into magento
-    await magentoPage.waitForSelector("#username");
-    await magentoPage.type(
-      "input#username",
-      process.env.MAGENTO_USERNAME as string,
-    );
-    await magentoPage.type(
-      "input#login",
-      process.env.MAGENTO_PASSWORD as string,
-    );
-    await magentoPage.click("button.action-login");
-
-    // i need to check if login worked and return a promise. same as pronto login
-    try {
-      await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
-    } catch (err) {
-      console.error(err);
-      return Promise.reject("did not login into magento");
-    }
-    return Promise.resolve("mag logged in");
   }
 
   async function navigateToSellScreen() {
@@ -327,6 +299,9 @@ export const prontoSellMagCommentScript = async () => {
   const browser = await puppeteer.launch();
   const magentoPage = await browser.newPage();
   const prontoPage = await browser.newPage();
+  await browser.close();
+  console.log("all done");
+  return;
   // Set screen size
   await prontoPage.setViewport({ width: 3840, height: 2160 });
   await magentoPage.setViewport({ width: 3840, height: 2160 });
