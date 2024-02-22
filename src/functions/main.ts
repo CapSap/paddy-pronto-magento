@@ -1,5 +1,10 @@
 import puppeteer from "puppeteer";
-import { getOrders, retry, runAsyncFuncInSeries } from "./utils.js";
+import {
+  easyMagOrderLog,
+  getOrders,
+  retry,
+  runAsyncFuncInSeries,
+} from "./utils.js";
 
 import loginIntoMagento from "./loginIntoMagento.js";
 import loginIntoPronto from "./loginIntoPronto.js";
@@ -47,14 +52,9 @@ export const prontoSellMagCommentScript = async () => {
   }
 
   console.log("result of order details array", orderDetails);
+  easyMagOrderLog(orderDetails);
 
-  // log order numbers for easy mag search
-  const orderNumbers = orderDetails.reduce(
-    (acc, curr) => `${acc} ${curr.magentoOrder}`,
-    "",
-  );
-  console.log(orderNumbers);
-
+  // try to run on 10 orders only
   const smallArray = orderDetails.slice(0, 10);
 
   console.log(smallArray);
