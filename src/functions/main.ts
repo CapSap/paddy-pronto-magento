@@ -84,7 +84,7 @@ export const prontoSellMagCommentScript = async () => {
   );
   console.log(orderNumbers);
 
-  const smallArray = orderDetails.slice(0, 1);
+  const smallArray = orderDetails.slice(0, 10);
 
   console.log(smallArray);
 
@@ -109,7 +109,7 @@ export const prontoSellMagCommentScript = async () => {
   // what feedback do i want to give back to the user?
   console.log(
     "auto selling complete. Results: ",
-    orderDetailsAfterMagentoComment,
+    // orderDetailsAfterMagentoComment,
   );
 
   console.log("browser close about to run");
