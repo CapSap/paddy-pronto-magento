@@ -20,13 +20,6 @@ export default async function inputProntoReceiptIntoMagento(
   await magentoPage.waitForSelector(
     "input.admin__control-text.data-grid-search-control",
   );
-  // try to remove active filters
-  console.log("try to remove active filters");
-  try {
-    await magentoPage.click("button.action-remove");
-  } catch {
-    console.log("no filters to remove");
-  }
   // clear input
   const searchInput = await magentoPage.$(
     "input.admin__control-text.data-grid-search-control",
