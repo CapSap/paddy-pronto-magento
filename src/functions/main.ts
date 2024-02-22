@@ -1,18 +1,8 @@
 import puppeteer from "puppeteer";
 import "dotenv/config";
-import {
-  retry,
-  runAsyncFuncInSeries,
-  saveContent,
-  waitTillHTMLRendered,
-} from "./utils.js";
+import { retry, runAsyncFuncInSeries } from "./utils.js";
 
-import type {
-  order,
-  orderWithMagCommentResult,
-  orderWithSellResult,
-  orderDetails,
-} from "../types.js";
+import type { orderDetails } from "../types.js";
 import loginIntoMagento from "./loginIntoMagento.js";
 import loginIntoPronto from "./loginIntoPronto.js";
 import navigateToSellScreen from "./navigateToSellScreen.js";
@@ -94,9 +84,11 @@ export const prontoSellMagCommentScript = async () => {
     (acc, curr) => `${acc} ${curr.magentoOrder}`,
     "",
   );
-  // console.log(orderNumbers);
+  console.log(orderNumbers);
 
-  const smallArray = orderDetails.slice(0, 4);
+  const smallArray = orderDetails.slice(0, 1);
+
+  console.log(smallArray);
 
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
     smallArray,

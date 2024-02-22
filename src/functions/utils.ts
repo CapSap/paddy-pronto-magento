@@ -96,7 +96,7 @@ export const runAsyncFuncInSeries = async (
 ) => {
   const results = [];
   for (const order of array) {
-    results.push(await fun(order));
+    results.push(await fun(order, page));
   }
   return results;
 };
