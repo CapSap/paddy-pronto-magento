@@ -2,7 +2,7 @@ import { generateToken } from "authenticator";
 import { Page } from "puppeteer";
 
 export default async function loginIntoPronto(prontoPage: Page) {
-  console.log("loginto promto starting");
+  console.log("loginto pronto starting");
   // nav to pronto login screen and enter relevant deets
   await prontoPage.goto("https://pronto.paddypallin.com.au/");
   // sometimes page shows the verification page and the login fails. not sure why
