@@ -38,14 +38,12 @@ export default async function inputProntoReceiptIntoMagento(
     hidden: true,
   });
 
-  await waitTillHTMLRendered(magentoPage);
-
-  await Promise.all([
+  /*  await Promise.all([
     magentoPage.waitForSelector("tr.data-row"),
     magentoPage.waitForSelector("a.action-menu-item"),
-  ]);
+  ]); */
 
-  await waitTillHTMLRendered(magentoPage);
+  // await waitTillHTMLRendered(magentoPage);
 
   // i need a better wait.as another idea i could extract out this function and try again until we get to the right page
   // /*
