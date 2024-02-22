@@ -1,69 +1,21 @@
-import puppeteer, { Page } from "puppeteer";
+import puppeteer from "puppeteer";
 import "dotenv/config";
 import { generateToken } from "authenticator";
-import { retry, saveContent } from "./functions/utils.js";
+import {
+  pressEnterManyTimes,
+  retry,
+  runAsyncFuncInSeries,
+  saveContent,
+  waitTillHTMLRendered,
+} from "./functions/utils.js";
+
+import type {
+  order,
+  orderWithMagCommentResult,
+  orderWithSellResult,
+} from "./types.js";
 
 export const prontoSellMagCommentScript = async () => {
-  // press enter many times
-  async function pressEnterManyTimes(presses: number) {
-    for (let i = 0; i < presses; i++) {
-      await prontoPage.keyboard.press("Enter");
-    }
-  }
-  // from https://stackoverflow.com/questions/52497252/puppeteer-wait-until-page-is-completely-loaded
-  // waitForNavigation and waitForNetworkIdle didnt work
-  const waitTillHTMLRendered = async (page: Page, timeout = 30000) => {
-    const checkDurationMsecs = 1000;
-    const maxChecks = timeout / checkDurationMsecs;
-    let lastHTMLSize = 0;
-    let checkCounts = 1;
-    let countStableSizeIterations = 0;
-    const minStableSizeIterations = 3;
-
-    while (checkCounts++ <= maxChecks) {
-      const html = await page.content();
-      const currentHTMLSize = html.length;
-
-      /*
-      const bodyHTMLSize = await page.evaluate(
-        () => document.body.innerHTML.length,
-      );
-      console.log(
-        "last: ",
-        lastHTMLSize,
-        " <> curr: ",
-        currentHTMLSize,
-        " body html size: ",
-        bodyHTMLSize,
-      );
-*/
-      if (lastHTMLSize != 0 && currentHTMLSize == lastHTMLSize)
-        countStableSizeIterations++;
-      else countStableSizeIterations = 0; //reset the counter
-
-      if (countStableSizeIterations >= minStableSizeIterations) {
-        // console.log("Page rendered fully..");
-        break;
-      }
-
-      lastHTMLSize = currentHTMLSize;
-      new Promise((r) => setTimeout(r, checkDurationMsecs));
-    }
-  };
-
-  const runAsyncFuncInSeries = async (
-    array: order[] | orderWithSellResult[],
-    fun: (
-      order: order | orderWithSellResult,
-    ) => Promise<orderWithSellResult> | Promise<orderWithMagCommentResult>,
-  ) => {
-    const results = [];
-    for (const order of array) {
-      results.push(await fun(order));
-    }
-    return results;
-  };
-
   async function loginIntoPronto() {
     console.log("loginto promto starting");
     // nav to pronto login screen and enter relevant deets
@@ -168,16 +120,6 @@ export const prontoSellMagCommentScript = async () => {
     await prontoPage.waitForSelector("td.data-tbody");
   }
 
-  type order = {
-    magentoOrder: string;
-    prontoReceipt: string;
-  };
-  type orderWithSellResult = {
-    magentoOrder: string;
-    prontoReceipt: string;
-    result: string;
-  };
-  type orderWithMagCommentResult = orderWithSellResult & { magResult: string };
   async function sellSingleOrder(order: order): Promise<orderWithSellResult> {
     // select td with correct mag order number
     console.log("sell single order fun running for", order);
