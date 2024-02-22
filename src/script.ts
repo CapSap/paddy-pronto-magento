@@ -1,41 +1,9 @@
 import puppeteer, { Page } from "puppeteer";
 import "dotenv/config";
 import { generateToken } from "authenticator";
-
-import * as fs from "node:fs";
+import { retry, saveContent } from "./functions/utils.js";
 
 export const prontoSellMagCommentScript = async () => {
-  // function that takes a screenshot and saves html.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async function saveContent(page: Page, content: string, filename: string) {
-    await page.screenshot({
-      path: `./screenshots/${filename}.png`,
-    });
-    try {
-      fs.writeFileSync(`./screenshots/${filename}.html`, content);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  // from https://mtsknn.fi/blog/js-retry-on-fail/
-  // function that will try to run again x number of times before throwing
-  const retry = async <T>(
-    fn: () => Promise<T> | T,
-    { retries, retryInterval }: { retries: number; retryInterval: number },
-  ): Promise<T> => {
-    try {
-      return await fn();
-    } catch (error) {
-      if (retries <= 0) {
-        throw error;
-      }
-      await sleep(retryInterval);
-      return retry(fn, { retries: retries - 1, retryInterval });
-    }
-  };
-  const sleep = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
-
   // press enter many times
   async function pressEnterManyTimes(presses: number) {
     for (let i = 0; i < presses; i++) {
