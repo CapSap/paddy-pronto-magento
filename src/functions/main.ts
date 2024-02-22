@@ -17,9 +17,7 @@ export const prontoSellMagCommentScript = async () => {
   const browser = await puppeteer.launch();
   const magentoPage = await browser.newPage();
   const prontoPage = await browser.newPage();
-  await browser.close();
-  console.log("all done");
-  //   return;
+
   // Set screen size
   await prontoPage.setViewport({ width: 3840, height: 2160 });
   await magentoPage.setViewport({ width: 3840, height: 2160 });
