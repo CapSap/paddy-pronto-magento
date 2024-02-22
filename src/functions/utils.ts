@@ -91,6 +91,7 @@ export const runAsyncFuncInSeries = async (
   array: order[] | orderWithSellResult[],
   fun: (
     order: order | orderWithSellResult,
+    page: Page,
   ) => Promise<orderWithSellResult> | Promise<orderWithMagCommentResult>,
 ) => {
   const results = [];

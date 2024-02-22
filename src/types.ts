@@ -12,3 +12,5 @@ export type orderWithSellResult = {
 export type orderWithMagCommentResult = orderWithSellResult & {
   magResult: string;
 };
+
+export type orderDetails = { magentoOrder: string; prontoReceipt: string }[];
