@@ -15,7 +15,7 @@ import loginIntoMagento from "../functions/loginIntoMagento.js";
     };
   });
 
-  const justOneOrder = correctFormat.slice(25);
+  const justOneOrder = correctFormat.slice(59);
 
   console.log(justOneOrder);
 
@@ -54,8 +54,12 @@ import loginIntoMagento from "../functions/loginIntoMagento.js";
     inputProntoReceiptIntoMagento,
   );
 
-  console.log(orderDetailsAfterMagentoComment);
+  console.log(
+    "last succ order",
+    orderDetailsAfterMagentoComment.slice(
+      orderDetailsAfterMagentoComment.length - 1,
+    ),
+  );
 
-  console.log("all done");
   await browser.close();
 })();
