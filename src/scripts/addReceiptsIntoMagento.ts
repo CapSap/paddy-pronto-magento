@@ -4,6 +4,7 @@ import { retry, runAsyncFuncInSeries } from "../functions/utils.js";
 import inputProntoReceiptIntoMagento from "../functions/inputProntoReceiptIntoMagento.js";
 import { order } from "../types.js";
 import loginIntoMagento from "../functions/loginIntoMagento.js";
+import clearSearchFilters from "../functions/clearSearchFilters.js";
 
 (async () => {
   const correctFormat: order[] = oldOrders.map((order) => {
@@ -47,6 +48,8 @@ import loginIntoMagento from "../functions/loginIntoMagento.js";
     retryInterval: 2000,
   }),
     console.log("login succ");
+
+  await clearSearchFilters(magentoPage);
 
   const orderDetailsAfterMagentoComment = await runAsyncFuncInSeries(
     justOneOrder,
