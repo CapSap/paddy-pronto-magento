@@ -1,5 +1,4 @@
 import puppeteer from "puppeteer";
-import "dotenv/config";
 import { retry, runAsyncFuncInSeries } from "./utils.js";
 
 import type { orderDetails } from "../types.js";
