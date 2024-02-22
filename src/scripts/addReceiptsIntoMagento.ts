@@ -1,25 +1,59 @@
-/*
-
-okay so. what do i want to do?
-
-take a csv and input the receipt number one by one.
-
-how do i get the range of orders to put the number in?
-
-i've got a link to all orders.
-
-i should check a few from the 17th, 16th, and find out where it starts.
-
-then i should read the csv, put it in a js object
-
-then loop through array and input one by one into mag.
-
-*/
-
+import puppeteer from "puppeteer";
 import { oldOrders } from "../temp/oldOrders.js";
+import { retry, runAsyncFuncInSeries } from "../functions/utils.js";
+import inputProntoReceiptIntoMagento from "../functions/inputProntoReceiptIntoMagento.js";
+import { order } from "../types.js";
+import loginIntoMagento from "../functions/loginIntoMagento.js";
 
-const justOneOrder = oldOrders.slice(0, 1);
+(async () => {
+  const correctFormat: order[] = oldOrders.map((order) => {
+    return {
+      magentoOrder: order.magNumber.toString(),
+      prontoReceipt: order.prontoNumber.toString(),
+      result:
+        " cm. I think some orders got missed so adding them to magento again. They were sold okay ",
+    };
+  });
 
-console.log(justOneOrder);
+  const justOneOrder = correctFormat.slice(0, 5);
 
-// okay nice. so i have an array of orders to put the mag number in
+  console.log(justOneOrder);
+
+  // 0. Launch the browser and open 2 new blank pages
+  const browser = await puppeteer.launch();
+  const magentoPage = await browser.newPage();
+  const prontoPage = await browser.newPage();
+
+  // Set screen size
+  await prontoPage.setViewport({ width: 3840, height: 2160 });
+  await magentoPage.setViewport({ width: 3840, height: 2160 });
+
+  // enable console logging on prontoPage
+  /*
+  prontoPage.on("console", (message) => {
+    console.log(`pronto Message: ${message.text()}`);
+  });
+  magentoPage.on("console", (message) => {
+    console.log(`magneot Message: ${message.text()}`);
+  });
+
+  */
+
+  // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
+  await retry(() => loginIntoMagento(magentoPage), {
+    retries: 2,
+    retryInterval: 2000,
+  }),
+    console.log("login succ");
+
+  const orderDetailsAfterMagentoComment = await runAsyncFuncInSeries(
+    justOneOrder,
+    magentoPage,
+    inputProntoReceiptIntoMagento,
+  );
+
+  console.log(orderDetailsAfterMagentoComment);
+
+  console.log("all done");
+  await browser.close();
+})();
