@@ -1,7 +1,6 @@
 import { Page } from "puppeteer";
 import { orderWithMagCommentResult, orderWithSellResult } from "../types.js";
 import { saveContent, waitTillHTMLRendered } from "./utils.js";
-
 export default async function inputProntoReceiptIntoMagento(
   order: orderWithSellResult,
   magentoPage: Page,

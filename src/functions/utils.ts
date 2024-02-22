@@ -1,11 +1,6 @@
 import * as fs from "node:fs";
 import { Page } from "puppeteer";
-import {
-  order,
-  orderDetails,
-  orderWithMagCommentResult,
-  orderWithSellResult,
-} from "../types.js";
+import { orderDetails } from "../types.js";
 
 // function that takes a screenshot and saves html.
 export async function saveContent(
@@ -88,13 +83,10 @@ export const waitTillHTMLRendered = async (page: Page, timeout = 30000) => {
   }
 };
 
-export const runAsyncFuncInSeries = async (
-  array: order[] | orderWithSellResult[],
+export const runAsyncFuncInSeries = async <T, R>(
+  array: T[],
   page: Page,
-  fun: (
-    order: order | orderWithSellResult,
-    page: Page,
-  ) => Promise<orderWithSellResult> | Promise<orderWithMagCommentResult>,
+  fun: (order: T, page: Page) => Promise<R>,
 ) => {
   const results = [];
   try {
@@ -103,7 +95,7 @@ export const runAsyncFuncInSeries = async (
     }
   } catch (err) {
     console.log("problem selling somewhere");
-    console.log(array);
+    console.log("list of batch", array);
     console.error(err);
   }
 
@@ -136,4 +128,13 @@ export async function getOrders(page: Page): Promise<orderDetails> {
 
     return rowReturn;
   });
+}
+
+// log a simple string of order numbers for easy magento search
+export function easyMagOrderLog(orderDetails: orderDetails) {
+  const orderNumbers = orderDetails.reduce(
+    (acc, curr) => `${acc} ${curr.magentoOrder}`,
+    "",
+  );
+  console.log(orderNumbers);
 }
