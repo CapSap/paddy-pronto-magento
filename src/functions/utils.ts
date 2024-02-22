@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import { Page } from "puppeteer";
-import { orderDetails } from "../types.js";
+import { order, orderDetails } from "../types.js";
 
 // function that takes a screenshot and saves html.
 export async function saveContent(
@@ -83,7 +83,7 @@ export const waitTillHTMLRendered = async (page: Page, timeout = 30000) => {
   }
 };
 
-export const runAsyncFuncInSeries = async <T, R>(
+export const runAsyncFuncInSeries = async <T extends order, R>(
   array: T[],
   page: Page,
   fun: (order: T, page: Page) => Promise<R>,
@@ -96,6 +96,7 @@ export const runAsyncFuncInSeries = async <T, R>(
   } catch (err) {
     console.log("problem selling somewhere");
     console.log("list of batch", array);
+    easyMagOrderLog(array);
     console.error(err);
   }
 
