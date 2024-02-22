@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc --watch --preserveWatchOutput",
     "build": "rm screenshots/*; tsc ",
-    "scheduler": "node build/scheduler.js",
-    "once": "node build/runOnce.js"
+    "scheduler": "node build/scripts/scheduler.js",
+    "once": "node build/scripts/runOnce.js"
   },
   "author": "",
   "license": "ISC",
