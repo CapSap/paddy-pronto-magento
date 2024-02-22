@@ -111,12 +111,12 @@ export const prontoSellMagCommentScript = async () => {
     const firstInput =
       "input[title='Enter the customer you wish to enquire on']";
     await prontoPage.waitForSelector(firstInput);
-    await pressEnterManyTimes(4);
+    await pressEnterManyTimes(prontoPage, 4);
     await prontoPage.keyboard.type("208");
 
-    await pressEnterManyTimes(4);
+    await pressEnterManyTimes(prontoPage, 4);
     await prontoPage.keyboard.type("30");
-    await pressEnterManyTimes(8);
+    await pressEnterManyTimes(prontoPage, 8);
     await prontoPage.waitForSelector("td.data-tbody");
   }
 
@@ -157,7 +157,7 @@ export const prontoSellMagCommentScript = async () => {
     // continue selling as normal
     await prontoPage.keyboard.type("u");
     await prontoPage.keyboard.type("70");
-    await pressEnterManyTimes(3);
+    await pressEnterManyTimes(prontoPage, 3);
 
     // select external-email as the printer
     const externalEmail = await prontoPage.waitForSelector(
@@ -168,7 +168,7 @@ export const prontoSellMagCommentScript = async () => {
     // not sure if i need this waitfor net idle
     await prontoPage.waitForNetworkIdle();
     // print and email the receipt to customer
-    await pressEnterManyTimes(3);
+    await pressEnterManyTimes(prontoPage, 3);
 
     // check header screen to make sure order was sold/updated successfully
     try {

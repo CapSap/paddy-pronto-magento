@@ -41,9 +41,9 @@ export const retry = async <T>(
 const sleep = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // press enter many times
-export async function pressEnterManyTimes(presses: number) {
+export async function pressEnterManyTimes(page: Page, presses: number) {
   for (let i = 0; i < presses; i++) {
-    await prontoPage.keyboard.press("Enter");
+    await page.keyboard.press("Enter");
   }
 }
 // from https://stackoverflow.com/questions/52497252/puppeteer-wait-until-page-is-completely-loaded
