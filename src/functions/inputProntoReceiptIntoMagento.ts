@@ -3,8 +3,8 @@ import { orderWithMagCommentResult, orderWithSellResult } from "../types.js";
 import { saveContent, waitTillHTMLRendered } from "./utils.js";
 
 export default async function inputProntoReceiptIntoMagento(
-  magentoPage: Page,
   order: orderWithSellResult,
+  magentoPage: Page,
 ): Promise<orderWithMagCommentResult> {
   if (!Object.prototype.hasOwnProperty.call(order, "result")) {
     throw new Error(
@@ -93,7 +93,6 @@ export default async function inputProntoReceiptIntoMagento(
     },
   );
   if (magOrderNumberFromPage !== order.magentoOrder) {
-    console.log(orderNumbers);
     throw new Error(
       "script is on the wrong page! error somewhere when navigating to the order detail page",
     );
