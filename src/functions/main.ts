@@ -90,6 +90,7 @@ export const prontoSellMagCommentScript = async () => {
 
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
     smallArray,
+    prontoPage,
     sellSingleOrder,
   );
 
@@ -97,6 +98,7 @@ export const prontoSellMagCommentScript = async () => {
   // // 4b. Get the result of above and update magento. inputting in magento will throw an error if something wrong happens
   const orderDetailsAfterMagentoComment = await runAsyncFuncInSeries(
     orderDetailsAfterProntoSelling,
+    magentoPage,
     inputProntoReceiptIntoMagento,
   );
   // 4c. and then that's the end of the script?
