@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { Page } from "puppeteer";
 
 export default async function loginIntoMagento(magentoPage: Page) {
@@ -9,6 +10,7 @@ export default async function loginIntoMagento(magentoPage: Page) {
 
   //login into magento
   await magentoPage.waitForSelector("#username");
+  console.log("do we make it here?");
   await magentoPage.type(
     "input#username",
     process.env.MAGENTO_USERNAME as string,

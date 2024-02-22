@@ -1,6 +1,8 @@
 import { generateToken } from "authenticator";
 import { Page } from "puppeteer";
 
+import "dotenv/config";
+
 export default async function loginIntoPronto(prontoPage: Page) {
   console.log("loginto pronto starting");
   // nav to pronto login screen and enter relevant deets
