@@ -29,14 +29,15 @@ I also had a little trouble trying to run an async function, passing each elemen
 
 1. pull the repo
 2. run `npm install`
-3. you will need to create a .env file with all relevant credentials
-4. run `npm run dev` (this will run the tsc (typescript compiler) on all files in src and watch for changes)
-5. run `npm run once` to see the script in action
+3. you will need to create a .env file with all relevant credentials. See the template file for what info you will need
+4. run `npm run build` this will run the tsc (typescript compiler) on all files in src.
+5. If you would like to make changes, run `npm run dev`. This will run the compiler and watch for changes
+6. run `npm run once` to see the script in action
 
 ## How to run script in 'production'
 
 1. run `npm run build`
-2. run `node build/schedule.js` - this will run the script every 30 mins
+2. run `node build/scripts/schedule.js` - this will run the script every 30 mins
    - You can also choose to run the script once only with
      `npm run once`
 
