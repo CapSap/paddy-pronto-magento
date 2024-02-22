@@ -7,14 +7,14 @@ import {
   runAsyncFuncInSeries,
   saveContent,
   waitTillHTMLRendered,
-} from "./functions/utils.js";
+} from "./utils.js";
 
 import type {
   order,
   orderWithMagCommentResult,
   orderWithSellResult,
-} from "./types.js";
-import loginIntoMagento from "./functions/loginIntoMagento.js";
+} from "../types.js";
+import loginIntoMagento from "./loginIntoMagento.js";
 
 export const prontoSellMagCommentScript = async () => {
   async function loginIntoPronto() {

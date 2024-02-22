@@ -16,7 +16,7 @@ then loop through array and input one by one into mag.
 
 */
 
-import { oldOrders } from "./oldOrders.js";
+import { oldOrders } from "../temp/oldOrders.js";
 
 const justOneOrder = oldOrders.slice(0, 1);
 
