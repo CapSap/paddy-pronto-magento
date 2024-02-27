@@ -1,6 +1,6 @@
 import { prontoSellMagCommentScript } from "../functions/main.js";
 
-const minutes = process.argv.slice(2)[0];
+const minutes = Number.parseInt(process.argv.slice(2)[0]);
 
 function scheduler(minutes: number) {
   const milliseconds = minutes * 60000;
@@ -13,7 +13,7 @@ function scheduler(minutes: number) {
     console.log("Script complete at ", new Date().toLocaleTimeString());
   }, milliseconds);
 }
-function delay(ms) {
+function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -24,7 +24,7 @@ async function someAsyncTask() {
   }, 20);
 }
 
-async function main(minutes) {
+async function main(minutes: number) {
   // if its not a number throw an error
   if (Number.isNaN(minutes)) {
     console.log(`${minutes} is not a number`);
@@ -38,6 +38,6 @@ async function main(minutes) {
   }
 }
 
-// main(minutes);
+main(minutes);
 
 scheduler(0.1);
