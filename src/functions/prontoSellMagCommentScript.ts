@@ -1,11 +1,4 @@
 import puppeteer from "puppeteer";
-import {
-  easyMagOrderLog,
-  enableLogging,
-  getOrders,
-  retry,
-  runAsyncFuncInSeries,
-} from "./utils.js";
 
 import loginIntoMagento from "./loginIntoMagento.js";
 import loginIntoPronto from "./loginIntoPronto.js";
@@ -14,6 +7,11 @@ import waitAndDisplayNeo from "./waitAndDisplayNeo.js";
 import sellSingleOrder from "./sellSingleOrder.js";
 import inputProntoReceiptIntoMagento from "./inputProntoReceiptIntoMagento.js";
 import clearSearchFilters from "./clearSearchFilters.js";
+import { enableLogging } from "./utils/enableLogging.js";
+import { retry } from "./utils/retry.js";
+import { getOrders } from "./utils/getOrders.js";
+import { runAsyncFuncInSeries } from "./utils/runAsyncFuncInSeries.js";
+import { easyMagOrderLog } from "./utils/easMagOrderLog.js";
 
 export const prontoSellMagCommentScript = async () => {
   // FUNCTION CALLS

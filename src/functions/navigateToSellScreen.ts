@@ -1,5 +1,5 @@
 import { Page } from "puppeteer";
-import { pressEnterManyTimes } from "./utils.js";
+import { pressEnterManyTimes } from "./utils/pressEnterManyTimes.js";
 
 export default async function navigateToSellScreen(prontoPage: Page) {
   console.log("nav to sell screen fun running");
