@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc --watch --preserveWatchOutput",
-    "build": "rm screenshots/*; tsc ",
+    "build": "rm screenshots/*; rm -r build; tsc ",
     "scheduler": "node build/scripts/scheduler.js",
     "once": "node build/scripts/runOnce.js"
   },
