@@ -5,10 +5,7 @@ import { saveContent } from "./utils/saveContent.js";
 import { waitTillHTMLRendered } from "./utils/waitTillHTMLRendered.js";
 import { enableLogging } from "./utils/enableLogging.js";
 
-export default async function checkSingleSkuOnWebsite(
-  sku: string,
-  description: string,
-) {
+export default async function checkSingleSkuOnWebsite(sku: string) {
   // create a browswer.
 
   const browser = await puppeteer.launch();
@@ -30,6 +27,12 @@ export default async function checkSingleSkuOnWebsite(
 
   // at the search results page. check if no results
   // so if we can find the selector no results, return {sku: sku, results: not found}
+
+  // but what is the output? while we're here what is the input?
+
+  // input will be the csv.
+
+  // output will be another csv- all skus not on website.
 
   await browser.close();
 }
