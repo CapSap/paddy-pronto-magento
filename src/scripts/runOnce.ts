@@ -1,4 +1,4 @@
-import { prontoSellMagCommentScript } from "../functions/main.js";
+import { prontoSellMagCommentScript } from "../functions/prontoSellMagCommentScript.js";
 
 (async () => {
   await prontoSellMagCommentScript();

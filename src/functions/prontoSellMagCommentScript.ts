@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer";
 import {
   easyMagOrderLog,
+  enableLogging,
   getOrders,
   retry,
   runAsyncFuncInSeries,
@@ -25,6 +26,9 @@ export const prontoSellMagCommentScript = async () => {
   // Set screen size
   await prontoPage.setViewport({ width: 3840, height: 2160 });
   await magentoPage.setViewport({ width: 3840, height: 2160 });
+
+  enableLogging(prontoPage);
+  // enableLogging(magentoPage);
 
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
   await Promise.all([
