@@ -14,11 +14,11 @@ import isSkuOnWebsite from "../../functions/isSkuOnWebsite.js";
   const __dirname = path.dirname(__filename);
 
   // start browser
-  const browser = await puppeteer.launch({
+  const browser2 = await puppeteer.launch({
     // headless: false,
     // slowMo: 250, // slow down by 250ms
   });
-  const paddyWebsite = await browser.newPage();
+  const paddyWebsite = await browser2.newPage();
   await paddyWebsite.setViewport({ width: 2000, height: 2160 });
   // enableLogging(paddyWebsite);
 
@@ -28,6 +28,10 @@ import isSkuOnWebsite from "../../functions/isSkuOnWebsite.js";
   // parse csv and remove headings
   const records: [] = parse(content, { from: 2 });
   const skuArray = records.map((row) => row[0]);
+
+  console.log(skuArray.length);
+
+  const shortedSkuArray = skuArray.slice(0, 100);
 
   const testArray = ["00015100012L", "00487300179NS"];
   // return a new array of skus that are not on website
@@ -43,20 +47,54 @@ import isSkuOnWebsite from "../../functions/isSkuOnWebsite.js";
   console.log(returnArray);
 */
 
-  const skusNotOnWebsite = testArray.map(async (sku) => {
-    if (await isSkuOnWebsiteParallel(sku)) {
-      return sku;
-    } else {
-      return;
+  // from https://advancedweb.hu/how-to-speed-up-puppeteer-scraping-with-parallelization/
+  const withBrowser = async (fn) => {
+    const browser = await puppeteer.launch();
+    try {
+      return await fn(browser);
+    } finally {
+      await browser.close();
+    }
+  };
+
+  const withPage = (browser) => async (fn) => {
+    const page = await browser.newPage();
+    try {
+      return await fn(page);
+    } finally {
+      await page.close();
+    }
+  };
+
+  const results: string[] = [];
+
+  await withBrowser(async (browser) => {
+    for (const sku of shortedSkuArray) {
+      const result = await withPage(browser)(async (page) => {
+        await page.goto(`https://www.paddypallin.com.au/nsearch?q=${sku}`);
+
+        try {
+          await page.waitForSelector("#nxt-nrf");
+          console.log(sku, "not on website");
+          return sku;
+        } catch (err) {
+          console.log(`this sku is on webiste ${sku}`);
+          return false;
+        }
+      });
+
+      results.push(result);
     }
   });
-  const resolved = await Promise.all(skusNotOnWebsite);
-  console.log("resolved", resolved);
+
+  console.log("results", results);
+
+  const filtered: string[] = results.filter((el) => el);
 
   // write this array to a csv
 
-  const output = stringify([returnArray]);
+  const output = stringify([filtered]);
   await fs.writeFile(`${__dirname}/output.csv`, output);
 
-  await browser.close();
+  await browser2.close();
 })();
