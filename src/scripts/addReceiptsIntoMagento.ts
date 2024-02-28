@@ -1,13 +1,14 @@
 import puppeteer from "puppeteer";
 import { oldOrders } from "../temp/oldOrders.js";
-import { retry, runAsyncFuncInSeries } from "../functions/utils.js";
 import inputProntoReceiptIntoMagento from "../functions/inputProntoReceiptIntoMagento.js";
-import { order } from "../types.js";
+import { orderWithSellResult } from "../types.js";
 import loginIntoMagento from "../functions/loginIntoMagento.js";
 import clearSearchFilters from "../functions/clearSearchFilters.js";
+import { retry } from "../functions/utils/retry.js";
+import { runAsyncFuncInSeries } from "../functions/utils/runAsyncFuncInSeries.js";
 
 (async () => {
-  const correctFormat: order[] = oldOrders.map((order) => {
+  const correctFormat: orderWithSellResult[] = oldOrders.map((order) => {
     return {
       magentoOrder: order.magNumber.toString(),
       prontoReceipt: order.prontoNumber.toString(),
