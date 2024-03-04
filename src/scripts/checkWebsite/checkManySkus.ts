@@ -24,14 +24,14 @@ import isSkuOnWebsite from "../../functions/isSkuOnWebsite.js";
 
   //read csv
   // readfile gets its's current directory from where node is being run
-  const content = await fs.readFile(`${__dirname}/input.csv`);
+  const content = await fs.readFile(`${__dirname}/input2.csv`);
   // parse csv and remove headings
   const records: [] = parse(content, { from: 2 });
   const skuArray = records.map((row) => row[0]);
 
   console.log(skuArray.length);
 
-  const shortedSkuArray = skuArray.slice(0, 100);
+  const shortedSkuArray = skuArray.slice(100);
 
   const testArray = ["00015100012L", "00487300179NS"];
   // return a new array of skus that are not on website
@@ -69,12 +69,12 @@ import isSkuOnWebsite from "../../functions/isSkuOnWebsite.js";
   const results: string[] = [];
 
   await withBrowser(async (browser) => {
-    for (const sku of shortedSkuArray) {
+    for (const sku of skuArray) {
       const result = await withPage(browser)(async (page) => {
         await page.goto(`https://www.paddypallin.com.au/nsearch?q=${sku}`);
 
         try {
-          await page.waitForSelector("#nxt-nrf");
+          await page.waitForSelector("#nxt-nrf", { timeout: 5000 });
           console.log(sku, "not on website");
           return sku;
         } catch (err) {
@@ -94,7 +94,7 @@ import isSkuOnWebsite from "../../functions/isSkuOnWebsite.js";
   // write this array to a csv
 
   const output = stringify([filtered]);
-  await fs.writeFile(`${__dirname}/output.csv`, output);
+  await fs.writeFile(`${__dirname}/output2.csv`, output);
 
   await browser2.close();
 })();
