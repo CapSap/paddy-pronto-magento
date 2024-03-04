@@ -17,13 +17,13 @@ export const prontoSellMagCommentScript = async () => {
   // FUNCTION CALLS
 
   // 0. Launch the browser and open 2 new blank pages
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: false });
   const magentoPage = await browser.newPage();
   const prontoPage = await browser.newPage();
 
   // Set screen size
-  await prontoPage.setViewport({ width: 3840, height: 2160 });
-  await magentoPage.setViewport({ width: 3840, height: 2160 });
+  await prontoPage.setViewport({ width: 1920, height: 1080 });
+  await magentoPage.setViewport({ width: 1920, height: 1080 });
 
   enableLogging(prontoPage);
   // enableLogging(magentoPage);
