@@ -1,4 +1,4 @@
-import { prontoSellMagCommentScript } from "../functions/main.js";
+import { prontoSellMagCommentScript } from "../functions/prontoSellMagCommentScript.js";
 
 console.log(
   "Pronto sell and magento comment script running every 30 mins. Starting at",

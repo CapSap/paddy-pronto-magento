@@ -1,10 +1,8 @@
 import { Page } from "puppeteer";
 import { order, orderWithSellResult } from "../types.js";
-import {
-  waitTillHTMLRendered,
-  saveContent,
-  pressEnterManyTimes,
-} from "./utils.js";
+import { waitTillHTMLRendered } from "./utils/waitTillHTMLRendered.js";
+import { saveContent } from "./utils/saveContent.js";
+import { pressEnterManyTimes } from "./utils/pressEnterManyTimes.js";
 
 export default async function sellSingleOrder(
   order: order,
@@ -18,7 +16,10 @@ export default async function sellSingleOrder(
   if (!magOrder) {
     throw new Error("could not find order");
   }
+
+  await waitTillHTMLRendered(prontoPage);
   await magOrder.click();
+
   await prontoPage.waitForNetworkIdle();
   await prontoPage.keyboard.press("h");
 
