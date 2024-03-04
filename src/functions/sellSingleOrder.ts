@@ -16,7 +16,10 @@ export default async function sellSingleOrder(
   if (!magOrder) {
     throw new Error("could not find order");
   }
+
+  await waitTillHTMLRendered(prontoPage);
   await magOrder.click();
+
   await prontoPage.waitForNetworkIdle();
   await prontoPage.keyboard.press("h");
 
