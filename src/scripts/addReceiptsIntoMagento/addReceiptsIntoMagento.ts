@@ -40,7 +40,7 @@ import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries
     };
   });
   // slice at index of last successful - 2
-  const ordersToDo = correctFormat.slice(94);
+  const ordersToDo = correctFormat.slice(217);
   console.log(ordersToDo[0]);
 
   // return;
