@@ -4,31 +4,39 @@ import path from "node:path";
 import { fileURLToPath } from "url";
 import { parse } from "csv/sync";
 import puppeteer from "puppeteer";
-import { oldOrders } from "../temp/oldOrders.js";
-import inputProntoReceiptIntoMagento from "../functions/inputProntoReceiptIntoMagento.js";
-import { orderWithSellResult } from "../types.js";
-import loginIntoMagento from "../functions/loginIntoMagento.js";
-import clearSearchFilters from "../functions/clearSearchFilters.js";
-import { retry } from "../functions/utils/retry.js";
-import { runAsyncFuncInSeries } from "../functions/utils/runAsyncFuncInSeries.js";
+// import { oldOrders } from "../../temp/oldOrders.js";
+import inputProntoReceiptIntoMagento from "../../functions/inputProntoReceiptIntoMagento.js";
+import { orderWithSellResult } from "../../types.js";
+import loginIntoMagento from "../../functions/loginIntoMagento.js";
+import clearSearchFilters from "../../functions/clearSearchFilters.js";
+import { retry } from "../../functions/utils/retry.js";
+import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries.js";
 
 (async () => {
-  const csvToJS = async () => {
-    //read csv
-    // readfile gets its's current directory from where node is being run
-    const content = await fs.readFile(`${__dirname}/orders.csv`);
-    // parse csv and remove headings
-    const records: [] = parse(content, { from: 2 });
-    const orders = records.map((row) => row[0]);
+  // read csv file that is located in same directory as this file
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
 
-    console.log(orders.length);
-    console.log(orders[0]);
-  };
-  csvToJS();
+  // read csv (file format must have pronto receipt in first col, mag order no in second col)
+  // readfile gets its's current directory from where node is being run
+  const content = await fs.readFile(`${__dirname}/orders.csv`);
+  // parse csv and remove headings
+  const records: [] = parse(content, { from: 2 });
 
+  const orders: orderWithSellResult[] = records.map((row) => {
+    return {
+      prontoNumber: row[0],
+      magNumber: row[1],
+      result:
+        " cm. I think some orders got missed so adding them to magento again. They were sold okay ",
+    };
+  });
+
+  console.log(orders.length);
+  console.log(orders[0]);
   return;
 
-  const correctFormat: orderWithSellResult[] = oldOrders.map((order) => {
+  const correctFormat: orderWithSellResult[] = orders.map((order) => {
     return {
       magentoOrder: order.magNumber.toString(),
       prontoReceipt: order.prontoNumber.toString(),
