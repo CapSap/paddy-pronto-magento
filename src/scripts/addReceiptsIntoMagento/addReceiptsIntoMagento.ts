@@ -11,6 +11,11 @@ import clearSearchFilters from "../../functions/clearSearchFilters.js";
 import { retry } from "../../functions/utils/retry.js";
 import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries.js";
 
+// csv file must be called input, and the first col must be the pronto number, 2nd column is the magento number
+// the heading must also be there. (it will be removed)
+// | prontoNumber | magnetoNumber |
+// | 123456       | 100000000     |
+
 (async () => {
   // read csv file that is located in same directory as this file
   const __filename = fileURLToPath(import.meta.url);
@@ -18,7 +23,7 @@ import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries
 
   // read csv (file format must have pronto receipt in first col, mag order no in second col)
   // readfile gets its's current directory from where node is being run
-  const content = await fs.readFile(`${__dirname}/orders.csv`);
+  const content = await fs.readFile(`${__dirname}/input.csv`);
   // parse csv and remove headings
   const records: [] = parse(content, { from: 2 });
 
@@ -50,17 +55,6 @@ import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries
 
   // Set screen size
   await magentoPage.setViewport({ width: 1080, height: 2160 });
-
-  // enable console logging on prontoPage
-  /*
-  prontoPage.on("console", (message) => {
-    console.log(`pronto Message: ${message.text()}`);
-  });
-  magentoPage.on("console", (message) => {
-    console.log(`magneot Message: ${message.text()}`);
-  });
-
-  */
 
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
   await retry(() => loginIntoMagento(magentoPage), {
