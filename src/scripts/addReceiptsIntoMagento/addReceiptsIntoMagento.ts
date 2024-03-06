@@ -1,5 +1,4 @@
 import { promises as fs } from "fs"; // 'fs/promises' not available in node 12
-import { stringify } from "csv";
 import path from "node:path";
 import { fileURLToPath } from "url";
 import { parse } from "csv/sync";
@@ -23,42 +22,34 @@ import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries
   // parse csv and remove headings
   const records: [] = parse(content, { from: 2 });
 
-  const orders: orderWithSellResult[] = records.map((row) => {
-    return {
-      prontoNumber: row[0],
-      magNumber: row[1],
-      result:
-        " cm. I think some orders got missed so adding them to magento again. They were sold okay ",
-    };
-  });
-
-  console.log(orders.length);
-  console.log(orders[0]);
-  return;
+  const orders: { prontoNumber: string; magNumber: string }[] = records.map(
+    (row) => {
+      return {
+        prontoNumber: row[0],
+        magNumber: row[1],
+      };
+    },
+  );
 
   const correctFormat: orderWithSellResult[] = orders.map((order) => {
     return {
       magentoOrder: order.magNumber.toString(),
       prontoReceipt: order.prontoNumber.toString(),
       result:
-        " cm. I think some orders got missed so adding them to magento again. They were sold okay ",
+        " this is orignial pronto sale. I think some orders got missed so adding them to magento again just in case . They were sold okay -- from node-cm",
     };
   });
+  // slice at index of last successful - 2
+  const ordersToDo = correctFormat.slice(94);
+  console.log(ordersToDo[0]);
 
-  const justOneOrder = correctFormat.slice(0, 10);
-
-  console.log(justOneOrder);
-
-  console.log(oldOrders.length);
-
+  // return;
   // 0. Launch the browser and open 2 new blank pages
   const browser = await puppeteer.launch();
   const magentoPage = await browser.newPage();
-  const prontoPage = await browser.newPage();
 
   // Set screen size
-  await prontoPage.setViewport({ width: 3840, height: 2160 });
-  await magentoPage.setViewport({ width: 3840, height: 2160 });
+  await magentoPage.setViewport({ width: 1080, height: 2160 });
 
   // enable console logging on prontoPage
   /*
@@ -81,10 +72,17 @@ import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries
   await clearSearchFilters(magentoPage);
 
   const orderDetailsAfterMagentoComment = await runAsyncFuncInSeries(
-    justOneOrder,
+    correctFormat,
     magentoPage,
     inputProntoReceiptIntoMagento,
   );
+
+  //here should be some code to save the csv of orders that failed/ yet to be inputed into mag.
+  // how do we get the index of where it failed?
+
+  // its a little tricky cause the above function could fail at anytime.
+  // id have to do something like wrap the entire function in a try catch. will that mess up the smaller specific try catches?
+  // will the error bubble up to the top and trigger every catch?
 
   console.log(
     "last succ order",
