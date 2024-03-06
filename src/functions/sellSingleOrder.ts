@@ -27,8 +27,10 @@ export default async function sellSingleOrder(
   await prontoPage.waitForNetworkIdle();
   await waitTillHTMLRendered(prontoPage);
 
-  // be aware: below selector fails intermittently rarely. is there a better selector i could wait for?
-  // why is it failing?
+  // be aware: below selector fails intermittently rarely. the cause is screen navigating to the wrong place (clicking on the wrong thing)
+  //  i added a wait for dom render at the end of this script so that the screen should be 'fresh' and ready to start process again.
+
+  //ps there is a loader div that has a class of main-loader, and a class of visible when the page is loading, but it's not there for moving between header and esc.
 
   const screenInputFail = await prontoPage.content();
   await saveContent(prontoPage, screenInputFail, "screenInputFail");
@@ -75,6 +77,7 @@ export default async function sellSingleOrder(
 
   console.log("sell single in pronto finished for", order);
   await prontoPage.keyboard.press("Escape");
+  await waitTillHTMLRendered(prontoPage);
   await prontoPage.waitForNetworkIdle();
 
   return {
