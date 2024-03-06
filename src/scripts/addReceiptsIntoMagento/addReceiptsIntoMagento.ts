@@ -72,7 +72,7 @@ import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries
   await clearSearchFilters(magentoPage);
 
   const orderDetailsAfterMagentoComment = await runAsyncFuncInSeries(
-    correctFormat,
+    ordersToDo,
     magentoPage,
     inputProntoReceiptIntoMagento,
   );
