@@ -59,10 +59,8 @@ export const prontoSellMagCommentScript = async () => {
   // try to run on 10 orders only
   const smallArray = orderDetails.slice(0, 4);
 
-  console.log(smallArray);
-
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
-    smallArray,
+    orderDetails,
     prontoPage,
     sellSingleOrder,
   );
