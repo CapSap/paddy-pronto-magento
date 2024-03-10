@@ -35,6 +35,9 @@ export default async function sellSingleOrder(
   const screenInputFail = await prontoPage.content();
   await saveContent(prontoPage, screenInputFail, "screenInputFail");
 
+  await prontoPage.waitForNetworkIdle();
+  await waitTillHTMLRendered(prontoPage);
+
   const receiptNoFromPronto = await prontoPage.$eval(
     "div.screen-input",
     (el) => {
