@@ -3,6 +3,7 @@ import { pressEnterManyTimes } from "./utils/pressEnterManyTimes.js";
 
 export default async function navigateToSellScreen(prontoPage: Page) {
   console.log("nav to sell screen fun running");
+  await prontoPage.bringToFront();
   //Go to status 30 screen
   const salesOrder = "button.folder[name='Sales &Orders']";
   await prontoPage.waitForSelector(salesOrder);

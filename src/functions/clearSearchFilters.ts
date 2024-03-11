@@ -1,6 +1,7 @@
 import { Page } from "puppeteer";
 
 export default async function clearSearchFilters(page: Page) {
+  await page.bringToFront();
   await page.goto(
     `https://www.paddypallin.com.au/agpallin_20/sales/order/index/key/${process.env.MAG_KEY}/`,
   );

@@ -34,9 +34,14 @@ export default async function inputProntoReceiptIntoMagento(
 
   await magentoPage.keyboard.press("Enter");
   // how to wait for spinner to be display none
-  await magentoPage.waitForSelector("div.admin__data-grid-loading-mask", {
-    hidden: true,
-  });
+
+  try {
+    await magentoPage.waitForSelector("div.admin__data-grid-loading-mask", {
+      hidden: true,
+    });
+  } catch (err) {
+    console.error(`issue waiting for the spinner loader ${err}`);
+  }
 
   /*  await Promise.all([
     magentoPage.waitForSelector("tr.data-row"),

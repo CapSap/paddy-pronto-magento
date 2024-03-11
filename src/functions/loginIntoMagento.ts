@@ -7,6 +7,7 @@ export default async function loginIntoMagento(magentoPage: Page) {
   await magentoPage.goto(
     `https://www.paddypallin.com.au/agpallin_20/admin/dashboard/index/key/${process.env.MAG_KEY}`,
   );
+  await magentoPage.bringToFront();
 
   //login into magento
   await magentoPage.waitForSelector("#username");
