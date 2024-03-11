@@ -7,6 +7,7 @@ import waitAndDisplayNeo from "./waitAndDisplayNeo.js";
 import sellSingleOrder from "./sellSingleOrder.js";
 import inputProntoReceiptIntoMagento from "./inputProntoReceiptIntoMagento.js";
 import clearSearchFilters from "./clearSearchFilters.js";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { enableLogging } from "./utils/enableLogging.js";
 import { retry } from "./utils/retry.js";
 import { getOrders } from "./utils/getOrders.js";
