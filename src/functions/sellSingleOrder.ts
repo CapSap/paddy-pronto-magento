@@ -51,8 +51,13 @@ export default async function sellSingleOrder(
   }
   // continue selling as normal
   await prontoPage.keyboard.type("u");
+  await waitTillHTMLRendered(prontoPage);
   await prontoPage.keyboard.type("70");
+  await waitTillHTMLRendered(prontoPage);
   await pressEnterManyTimes(prontoPage, 3);
+
+  // out of about 200 orders, 2 failed. the enter is not reliable to get to next screen / step
+  // better solution is to click on okay button
 
   // select external-email as the printer
   const externalEmail = await prontoPage.waitForSelector(
