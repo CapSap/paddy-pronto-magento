@@ -17,7 +17,7 @@ export const prontoSellMagCommentScript = async () => {
   // FUNCTION CALLS
 
   // 0. Launch the browser and open 2 new blank pages
-  const browser = await puppeteer.launch({});
+  const browser = await puppeteer.launch({ headless: false });
   const magentoPage = await browser.newPage();
   const prontoPage = await browser.newPage();
 
@@ -57,10 +57,10 @@ export const prontoSellMagCommentScript = async () => {
   easyMagOrderLog(orderDetails);
 
   // try to run on 10 orders only
-  const smallArray = orderDetails.slice(0, 4);
+  const smallArray = orderDetails.slice(0, 10);
 
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
-    orderDetails,
+    smallArray,
     prontoPage,
     sellSingleOrder,
   );
