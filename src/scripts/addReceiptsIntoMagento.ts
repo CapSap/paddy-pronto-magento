@@ -1,27 +1,28 @@
 import puppeteer from "puppeteer";
 import { oldOrders } from "../temp/oldOrders.js";
 import inputProntoReceiptIntoMagento from "../functions/inputProntoReceiptIntoMagento.js";
-import { orderWithSellResult } from "../types.js";
+import { order, orderWithSellResult } from "../types.js";
 import loginIntoMagento from "../functions/loginIntoMagento.js";
 import clearSearchFilters from "../functions/clearSearchFilters.js";
+import { orders2 } from "../temp/orders2.js";
 import { retry } from "../functions/utils/retry.js";
 import { runAsyncFuncInSeries } from "../functions/utils/runAsyncFuncInSeries.js";
 
 (async () => {
-  const correctFormat: orderWithSellResult[] = oldOrders.map((order) => {
+  const correctFormat: orderWithSellResult[] = orders2.map((order) => {
     return {
-      magentoOrder: order.magNumber.toString(),
-      prontoReceipt: order.prontoNumber.toString(),
+      magentoOrder: order.magentoOrder.toString(),
+      prontoReceipt: order.prontoReceipt.toString(),
       result:
         " cm. I think some orders got missed so adding them to magento again. They were sold okay ",
     };
   });
 
-  const justOneOrder = correctFormat.slice(257);
+  const justOneOrder = correctFormat.slice(10);
 
   console.log(justOneOrder);
 
-  console.log(oldOrders.length);
+  console.log(orders2.length);
 
   // 0. Launch the browser and open 2 new blank pages
   const browser = await puppeteer.launch();
