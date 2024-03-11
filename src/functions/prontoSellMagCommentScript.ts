@@ -25,7 +25,7 @@ export const prontoSellMagCommentScript = async () => {
   await prontoPage.setViewport({ width: 1920, height: 1080 });
   await magentoPage.setViewport({ width: 1920, height: 1080 });
 
-  enableLogging(prontoPage);
+  // enableLogging(prontoPage);
   // enableLogging(magentoPage);
 
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
