@@ -25,7 +25,7 @@ import { runAsyncFuncInSeries } from "../functions/utils/runAsyncFuncInSeries.js
   console.log(orders2.length);
 
   // 0. Launch the browser and open 2 new blank pages
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: false });
   const magentoPage = await browser.newPage();
   const prontoPage = await browser.newPage();
 
