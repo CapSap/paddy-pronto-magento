@@ -1,14 +1,15 @@
 import puppeteer from "puppeteer";
-import { oldOrders } from "../temp/oldOrders.js";
-import inputProntoReceiptIntoMagento from "../functions/inputProntoReceiptIntoMagento.js";
-import { order, orderWithSellResult } from "../types.js";
-import loginIntoMagento from "../functions/loginIntoMagento.js";
-import clearSearchFilters from "../functions/clearSearchFilters.js";
-import { orders2 } from "../temp/orders2.js";
-import { retry } from "../functions/utils/retry.js";
-import { runAsyncFuncInSeries } from "../functions/utils/runAsyncFuncInSeries.js";
+import inputProntoReceiptIntoMagento from "../../functions/inputProntoReceiptIntoMagento.js";
+import { orderWithSellResult } from "../../types.js";
+import loginIntoMagento from "../../functions/loginIntoMagento.js";
+import clearSearchFilters from "../../functions/clearSearchFilters.js";
+import { orders2 } from "../../temp/orders2.js";
+import { retry } from "../../functions/utils/retry.js";
+import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries.js";
 
 (async () => {
+  // this scripts needs a a JS object to sell against. create a .js file in the temp folder, ensure that it is formatted correctly and then sell as normal using common functions
+
   const correctFormat: orderWithSellResult[] = orders2.map((order) => {
     return {
       magentoOrder: order.magentoOrder.toString(),
