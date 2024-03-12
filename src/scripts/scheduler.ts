@@ -1,13 +1,13 @@
 import { prontoSellMagCommentScript } from "../functions/main.js";
 
-const minutes = Number.parseInt(process.argv.slice(2)[0]);
+const userInput = process.argv.slice(2)[0];
 
 function scheduler(minutes: number) {
   const milliseconds = minutes * 60000;
 
   setInterval(async () => {
     console.log("Script starting at", new Date().toLocaleTimeString());
-    // await prontoSellMagCommentScript();
+    await prontoSellMagCommentScript();
     await someAsyncTask();
     await delay(22);
     console.log("Script complete at ", new Date().toLocaleTimeString());
@@ -18,26 +18,30 @@ function delay(ms: number) {
 }
 
 async function someAsyncTask() {
-  console.log("is this running");
+  console.log("some async task starting");
   setTimeout(() => {
     console.log("running at ", new Date().toLocaleTimeString());
   }, 20);
 }
 
-async function main(minutes: number) {
-  // if its not a number throw an error
-  if (Number.isNaN(minutes)) {
-    console.log(`${minutes} is not a number`);
-    // if minutes is undefined, run a default 30 mins
-  } else if (minutes === undefined) {
-    console.log("No minute argument passed. Running every 30 mins by default");
+async function main(userInput: string) {
+  if (userInput === undefined) {
+    console.log("No minutes argument passed. Running every 30 mins by default");
     scheduler(30);
+  } else if (
+    Number.isNaN(Number.parseFloat(userInput)) ||
+    Number.parseFloat(userInput) < 5
+  ) {
+    console.log(
+      `${userInput} is not a valid number. Please enter a valid number, greater than 5`,
+    );
   } else {
     // and if a number is passed, run the func ever number of minutes
-    scheduler(minutes);
+    console.log(`Running script every ${userInput} minutes`);
+    scheduler(Number.parseInt(userInput));
   }
 }
 
-main(minutes);
+main(userInput);
 
-scheduler(0.1);
+// scheduler(0.1);
