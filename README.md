@@ -25,7 +25,7 @@ I also had a little trouble trying to run an async function, passing each elemen
 6. do nessessary magento steps
 7. done
 
-## How to install and run
+## How to install and contribute
 
 1. pull the repo
 2. run `npm install`
@@ -34,16 +34,43 @@ I also had a little trouble trying to run an async function, passing each elemen
 5. If you would like to make changes, run `npm run dev`. This will run the compiler and watch for changes
 6. run `npm run once` to see the script in action
 
-## How to run script in 'production'
+### How to complete tasks
+
+## Sell in pronto, add receipt no into magento - Run once only
 
 1. run `npm run build`
-2. run `node build/scripts/schedule.js` - this will run the script every 30 mins
-   - You can also choose to run the script once only with
-     `npm run once`
+2. Ensure that you are connected to network and running VPN
+3. From the root folder run `node build/scripts/addReceiptsIntoMagento.js`
+
+## Sell in pronto, add receipt no into magento - Run on a schedule
+
+1. run `npm run build`
+2. Ensure that you are connected to network and running VPN
+3. From the root folder run `node build/scripts/scheduler/scheduler.js XX`
+   (the XX is where you will put a number in minutes)
+4. This will run the script for XX number of minutes. If you don't put anything, the script will run every 30 mins by default
+
+## Add receipts into Magento
+
+1. run `npm run build`
+2. Ensure that you are connected to network and running VPN
+3. You will need to put a CSV into this folder: /build/scripts/addReceiptsIntoMagneo
+4. The headings must be there (the first line will be removed) and the order must be:
+
+| prontoNumber | magnetoNumber |
+| 123456 | 100000000 | 5. run `node build/scripts/addReceiptsIntoMagento/addReceiptsIntoMagentoViaCsv.js`
+
+### If you have the data from the output of a console, you can run this script with this data as a JS object
+
+1. Go into the addReceiptsIntoMagento.ts file, and import the data
+2. Tweak the script within this file to accept the data
+3. run `npm run build`
+4. run `node build/scripts/addReceiptsIntoMagento/addReceiptsIntoMagento.js`
 
 ## What's next?
 
 - [x] Run the script every 30 mins or so using some sort of scheduler (could this be a simple while loop?)
+- [ ] Check for CWS not found`
 - [ ] Check for orders that have not appeared in pronto
 - [ ] Handleing of errors that I have not come accross yet
 - [ ] e.g. network errors at specific points
