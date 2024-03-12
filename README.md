@@ -61,8 +61,7 @@ I also had a little trouble trying to run an async function, passing each elemen
 | ------------ | ------------- |
 | 123456       | 10000000      |
 
-| prontoNumber | magnetoNumber |
-| 123456 | 100000000 | 5. run `node build/scripts/addReceiptsIntoMagento/addReceiptsIntoMagentoViaCsv.js`
+5. run `node build/scripts/addReceiptsIntoMagento/addReceiptsIntoMagentoViaCsv.js`
 
 ### If you have the data from the output of a console, you can run this script with this data as a JS object
 
