@@ -34,15 +34,15 @@ I also had a little trouble trying to run an async function, passing each elemen
 5. If you would like to make changes, run `npm run dev`. This will run the compiler and watch for changes
 6. run `npm run once` to see the script in action
 
-### How to complete tasks
+## How to complete tasks
 
-## Sell in pronto, add receipt no into magento - Run once only
+### Sell in pronto, add receipt no into magento - Run once only
 
 1. run `npm run build`
 2. Ensure that you are connected to network and running VPN
 3. From the root folder run `node build/scripts/addReceiptsIntoMagento.js`
 
-## Sell in pronto, add receipt no into magento - Run on a schedule
+### Sell in pronto, add receipt no into magento - Run on a schedule
 
 1. run `npm run build`
 2. Ensure that you are connected to network and running VPN
@@ -50,7 +50,7 @@ I also had a little trouble trying to run an async function, passing each elemen
    (the XX is where you will put a number in minutes)
 4. This will run the script for XX number of minutes. If you don't put anything, the script will run every 30 mins by default
 
-## Add receipts into Magento
+### Add receipts into Magento
 
 1. run `npm run build`
 2. Ensure that you are connected to network and running VPN
