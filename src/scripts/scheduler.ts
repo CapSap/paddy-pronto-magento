@@ -1,4 +1,4 @@
-import { prontoSellMagCommentScript } from "../functions/main.js";
+import { prontoSellMagCommentScript } from "../functions/prontoSellMagCommentScript.js";
 
 const userInput = process.argv.slice(2)[0];
 
@@ -43,5 +43,3 @@ async function main(userInput: string) {
 }
 
 main(userInput);
-
-// scheduler(0.1);

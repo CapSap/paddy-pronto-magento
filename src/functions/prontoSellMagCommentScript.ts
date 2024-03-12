@@ -1,10 +1,4 @@
 import puppeteer from "puppeteer";
-import {
-  easyMagOrderLog,
-  getOrders,
-  retry,
-  runAsyncFuncInSeries,
-} from "./utils.js";
 
 import loginIntoMagento from "./loginIntoMagento.js";
 import loginIntoPronto from "./loginIntoPronto.js";
@@ -13,18 +7,27 @@ import waitAndDisplayNeo from "./waitAndDisplayNeo.js";
 import sellSingleOrder from "./sellSingleOrder.js";
 import inputProntoReceiptIntoMagento from "./inputProntoReceiptIntoMagento.js";
 import clearSearchFilters from "./clearSearchFilters.js";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { enableLogging } from "./utils/enableLogging.js";
+import { retry } from "./utils/retry.js";
+import { getOrders } from "./utils/getOrders.js";
+import { runAsyncFuncInSeries } from "./utils/runAsyncFuncInSeries.js";
+import { easyMagOrderLog } from "./utils/easMagOrderLog.js";
 
 export const prontoSellMagCommentScript = async () => {
   // FUNCTION CALLS
 
   // 0. Launch the browser and open 2 new blank pages
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: false });
   const magentoPage = await browser.newPage();
   const prontoPage = await browser.newPage();
 
   // Set screen size
-  await prontoPage.setViewport({ width: 3840, height: 2160 });
-  await magentoPage.setViewport({ width: 3840, height: 2160 });
+  await prontoPage.setViewport({ width: 1920, height: 1080 });
+  await magentoPage.setViewport({ width: 1920, height: 1080 });
+
+  // enableLogging(prontoPage);
+  // enableLogging(magentoPage);
 
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
   await Promise.all([
@@ -57,7 +60,7 @@ export const prontoSellMagCommentScript = async () => {
   // try to run on 10 orders only
   const smallArray = orderDetails.slice(0, 10);
 
-  console.log(smallArray);
+  // console.log(smallArray);
 
   const orderDetailsAfterProntoSelling = await runAsyncFuncInSeries(
     smallArray,
