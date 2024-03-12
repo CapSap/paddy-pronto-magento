@@ -1,4 +1,4 @@
-import { prontoSellMagCommentScript } from "../functions/prontoSellMagCommentScript.js";
+import { prontoSellMagCommentScript } from "../../functions/prontoSellMagCommentScript.js";
 
 const userInput = process.argv.slice(2)[0];
 
