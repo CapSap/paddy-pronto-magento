@@ -1,5 +1,4 @@
 import puppeteer from "puppeteer";
-
 import loginIntoMagento from "./loginIntoMagento.js";
 import loginIntoPronto from "./loginIntoPronto.js";
 import navigateToSellScreen from "./navigateToSellScreen.js";
@@ -58,7 +57,7 @@ export const prontoSellMagCommentScript = async () => {
   easyMagOrderLog(orderDetails);
 
   // try to run on 10 orders only
-  const smallArray = orderDetails.slice(0, 10);
+  const smallArray = orderDetails.slice(0);
 
   // console.log(smallArray);
 
