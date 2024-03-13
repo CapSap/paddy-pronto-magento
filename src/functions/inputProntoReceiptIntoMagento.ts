@@ -133,16 +133,30 @@ export default async function inputProntoReceiptIntoMagento(
   const doesCommentsContainCWS = /CWS Item was not found/.test(
     comments.toString(),
   );
+  // extract out customer details
 
+  // could i select all the a tags that are children of that classname?
+  // that would give me all i need i think?
+
+  const deets = await magentoPage.$eval(
+    ".admin__table-secondary.order-account-information-table",
+    (el) => {
+      console.log("el type", typeof el);
+      console.log(el.innerHTML);
+      return el.innerHTML;
+    },
+  );
+  console.log("type", typeof deets);
+  console.log("deets", deets);
   const orderInfo: OrderCWS = {
     ...order,
     comments: JSON.stringify(comments),
-    orderUrl: magentoPage.url(),
+    url: magentoPage.url(),
   };
   console.log("does order comments` contain cws?", doesCommentsContainCWS);
   // create a ticket in zendesk
   if (doesCommentsContainCWS) {
-    await createZendeskTicket(orderInfo);
+    // await createZendeskTicket(orderInfo);
   }
   return { ...order, magResult: "comment was made in magento" };
 }
