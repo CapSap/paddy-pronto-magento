@@ -2,6 +2,7 @@ import { Page } from "puppeteer";
 import { orderWithMagCommentResult, orderWithSellResult } from "../types.js";
 import { saveContent } from "./utils/saveContent.js";
 import { waitTillHTMLRendered } from "./utils/waitTillHTMLRendered.js";
+import createZendeskTicket from "./utils/createZendeskTicket.js";
 export default async function inputProntoReceiptIntoMagento(
   order: orderWithSellResult,
   magentoPage: Page,
@@ -128,7 +129,22 @@ export default async function inputProntoReceiptIntoMagento(
   const doesCommentsContainCWS = /CWS Item was not found/.test(
     comments.toString(),
   );
+
+  type OrderCWS = {
+    magentoOrder: string;
+    comments: string;
+    orderUrl: string;
+  };
+
+  const orderInfo: OrderCWS = {
+    ...order,
+    comments: JSON.stringify(comments),
+    orderUrl: magentoPage.url(),
+  };
   console.log("does order comments` contain cws?", doesCommentsContainCWS);
   // create a ticket in zendesk
+  if (doesCommentsContainCWS) {
+    await createZendeskTicket(orderInfo);
+  }
   return { ...order, magResult: "comment was made in magento" };
 }
