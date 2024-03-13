@@ -124,5 +124,11 @@ export default async function inputProntoReceiptIntoMagento(
       `did not find order comments for${order.magentoOrder} `,
     );
   }
+  // check for CWS not found
+  const doesCommentsContainCWS = /CWS Item was not found/.test(
+    comments.toString(),
+  );
+  console.log("does order comments` contain cws?", doesCommentsContainCWS);
+  // create a ticket in zendesk
   return { ...order, magResult: "comment was made in magento" };
 }
