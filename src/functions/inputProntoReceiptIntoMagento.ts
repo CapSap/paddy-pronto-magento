@@ -1,5 +1,9 @@
 import { Page } from "puppeteer";
-import { orderWithMagCommentResult, orderWithSellResult } from "../types.js";
+import {
+  OrderCWS,
+  orderWithMagCommentResult,
+  orderWithSellResult,
+} from "../types.js";
 import { saveContent } from "./utils/saveContent.js";
 import { waitTillHTMLRendered } from "./utils/waitTillHTMLRendered.js";
 import createZendeskTicket from "./utils/createZendeskTicket.js";
@@ -129,12 +133,6 @@ export default async function inputProntoReceiptIntoMagento(
   const doesCommentsContainCWS = /CWS Item was not found/.test(
     comments.toString(),
   );
-
-  type OrderCWS = {
-    magentoOrder: string;
-    comments: string;
-    orderUrl: string;
-  };
 
   const orderInfo: OrderCWS = {
     ...order,
