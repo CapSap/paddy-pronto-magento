@@ -6,9 +6,18 @@ import clearSearchFilters from "../../functions/clearSearchFilters.js";
 import { orders2 } from "../../temp/orders2.js";
 import { retry } from "../../functions/utils/retry.js";
 import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries.js";
+import { enableLogging } from "../../functions/utils/enableLogging.js";
 
 (async () => {
   // this scripts needs a a JS object to sell against. create a .js file in the temp folder, ensure that it is formatted correctly and then sell as normal using common functions
+
+  const failedOrder: orderWithSellResult[] = [
+    {
+      magentoOrder: "1000543872",
+      prontoReceipt: "test",
+      result: "test",
+    },
+  ];
 
   const correctFormat: orderWithSellResult[] = orders2.map((order) => {
     return {
@@ -21,12 +30,12 @@ import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries
 
   const justOneOrder = correctFormat.slice(10);
 
-  console.log(justOneOrder);
+  // console.log(justOneOrder);
 
-  console.log(orders2.length);
+  // console.log(orders2.length);
 
   // 0. Launch the browser and open 2 new blank pages
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({});
   const magentoPage = await browser.newPage();
   const prontoPage = await browser.newPage();
 
@@ -35,7 +44,9 @@ import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries
   await magentoPage.setViewport({ width: 3840, height: 2160 });
 
   // enable console logging on prontoPage
+  enableLogging(magentoPage);
   /*
+  
   prontoPage.on("console", (message) => {
     console.log(`pronto Message: ${message.text()}`);
   });
@@ -50,12 +61,12 @@ import { runAsyncFuncInSeries } from "../../functions/utils/runAsyncFuncInSeries
     retries: 2,
     retryInterval: 2000,
   }),
-    console.log("login succ");
+    // console.log("login succ");
 
-  await clearSearchFilters(magentoPage);
+    await clearSearchFilters(magentoPage);
 
   const orderDetailsAfterMagentoComment = await runAsyncFuncInSeries(
-    justOneOrder,
+    failedOrder,
     magentoPage,
     inputProntoReceiptIntoMagento,
   );
