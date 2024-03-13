@@ -1,4 +1,6 @@
-async function createZendeskTicket(order) {
+import { OrderCWS } from "../../types.js";
+
+async function createZendeskTicket(order: OrderCWS) {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -11,10 +13,17 @@ async function createZendeskTicket(order) {
   const data = JSON.stringify({
     ticket: {
       comment: {
-        body: "Hi team cs, the following order was sold but we discoverd that we've got an CWS not found error. Could you please follow up with customer? Cheers",
+        body: `Hi team cs, the following order was sold but we discoverd that we've got an CWS not found error. Could you please follow up with customer? Cheers,
+      order number: ${order.magentoOrder}
+      url: ${order.url}
+
+
+      ps there is a chance that the customer has already reached out to us so please be aware
+      cheers -charlie via node
+        `,
       },
       priority: "urgent",
-      subject: "E-Gift card error - CWS not found",
+      subject: "E-Gift card error - CWS not found _TEST TICKET",
       tags: ["CWS_not_found"],
     },
   });
@@ -40,7 +49,10 @@ async function createZendeskTicket(order) {
     return await fetch(
       "https://paddypallin.zendesk.com/api/v2/tickets/",
       requestOptions,
-    ).then((res) => res.text().then((result) => console.log(result)));
+    ).then(
+      (res) => res.text(),
+      // .then((result) => console.log(result))
+    );
   } catch (err) {
     console.error("Error making post req to zen", err);
   }
