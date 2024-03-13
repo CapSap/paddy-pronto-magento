@@ -14,3 +14,12 @@ export type orderWithMagCommentResult = orderWithSellResult & {
 };
 
 export type orderDetails = { magentoOrder: string; prontoReceipt: string }[];
+
+export type OrderCWS = {
+  magentoOrder: string;
+  comments: string;
+  url: string;
+  name: string;
+  email: string;
+  phone: string;
+};
