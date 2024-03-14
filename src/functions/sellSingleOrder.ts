@@ -54,8 +54,9 @@ export default async function sellSingleOrder(
   await waitTillHTMLRendered(prontoPage);
   await prontoPage.keyboard.type("70");
   await waitTillHTMLRendered(prontoPage);
-  await pressEnterManyTimes(prontoPage, 3);
-
+  await pressEnterManyTimes(prontoPage, 1);
+  await waitTillHTMLRendered(prontoPage);
+  await pressEnterManyTimes(prontoPage, 2);
   // out of about 200 orders, 2 failed. the enter is not reliable to get to next screen / step
   // better solution is to click on okay button
 
