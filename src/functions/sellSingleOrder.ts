@@ -9,7 +9,7 @@ export default async function sellSingleOrder(
   prontoPage: Page,
 ): Promise<orderWithSellResult> {
   // select td with correct mag order number
-  console.log("sell single order fun running for", order);
+  console.log("pronto sell attempt running on", order);
   const magOrder = await prontoPage.waitForSelector(
     `::-p-text("${order.magentoOrder}")`,
   );
@@ -83,7 +83,7 @@ export default async function sellSingleOrder(
     };
   }
 
-  console.log("completed successfully");
+  console.log("complete");
   await prontoPage.keyboard.press("Escape");
   await waitTillHTMLRendered(prontoPage);
   await prontoPage.waitForNetworkIdle();
