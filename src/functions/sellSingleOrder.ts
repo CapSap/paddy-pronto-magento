@@ -80,7 +80,8 @@ export default async function sellSingleOrder(
     );
     return {
       ...order,
-      result: "failed to sell automatically. problem somewhere in pronto -cm",
+      result:
+        "failed to sell automatically. problem somewhere in pronto. order may still be at status 70 -cm",
     };
   }
 
