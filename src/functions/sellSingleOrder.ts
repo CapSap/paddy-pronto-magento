@@ -57,8 +57,6 @@ export default async function sellSingleOrder(
   await pressEnterManyTimes(prontoPage, 1);
   await waitTillHTMLRendered(prontoPage);
   await pressEnterManyTimes(prontoPage, 2);
-  // out of about 200 orders, 2 failed. the enter is not reliable to get to next screen / step
-  // better solution is to click on okay button
 
   // select external-email as the printer
   const externalEmail = await prontoPage.waitForSelector(
@@ -68,7 +66,7 @@ export default async function sellSingleOrder(
 
   // not sure if i need this waitfor net idle
   await prontoPage.waitForNetworkIdle();
-  // print and email the receipt to customer
+  // print and email the receipt to customefor some reason the button click is more unreliable than the pressing enter. r
   await pressEnterManyTimes(prontoPage, 3);
 
   // check header screen to make sure order was sold/updated successfully
