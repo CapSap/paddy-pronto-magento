@@ -83,7 +83,7 @@ export default async function sellSingleOrder(
     };
   }
 
-  console.log("sell single in pronto finished for", order);
+  console.log("completed successfully");
   await prontoPage.keyboard.press("Escape");
   await waitTillHTMLRendered(prontoPage);
   await prontoPage.waitForNetworkIdle();
