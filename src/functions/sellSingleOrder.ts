@@ -9,7 +9,7 @@ export default async function sellSingleOrder(
   prontoPage: Page,
 ): Promise<orderWithSellResult> {
   // select td with correct mag order number
-  console.log("sell single order fun running for", order);
+  console.log("pronto sell attempt running on", order);
   const magOrder = await prontoPage.waitForSelector(
     `::-p-text("${order.magentoOrder}")`,
   );
@@ -54,10 +54,9 @@ export default async function sellSingleOrder(
   await waitTillHTMLRendered(prontoPage);
   await prontoPage.keyboard.type("70");
   await waitTillHTMLRendered(prontoPage);
-  await pressEnterManyTimes(prontoPage, 3);
-
-  // out of about 200 orders, 2 failed. the enter is not reliable to get to next screen / step
-  // better solution is to click on okay button
+  await pressEnterManyTimes(prontoPage, 1);
+  await waitTillHTMLRendered(prontoPage);
+  await pressEnterManyTimes(prontoPage, 2);
 
   // select external-email as the printer
   const externalEmail = await prontoPage.waitForSelector(
@@ -67,7 +66,7 @@ export default async function sellSingleOrder(
 
   // not sure if i need this waitfor net idle
   await prontoPage.waitForNetworkIdle();
-  // print and email the receipt to customer
+  // print and email the receipt to customefor some reason the button click is more unreliable than the pressing enter. r
   await pressEnterManyTimes(prontoPage, 3);
 
   // check header screen to make sure order was sold/updated successfully
@@ -79,11 +78,12 @@ export default async function sellSingleOrder(
     );
     return {
       ...order,
-      result: "failed to sell automatically. problem somewhere in pronto -cm",
+      result:
+        "failed to sell automatically. problem somewhere in pronto. order may still be at status 70 -cm",
     };
   }
 
-  console.log("sell single in pronto finished for", order);
+  console.log("complete");
   await prontoPage.keyboard.press("Escape");
   await waitTillHTMLRendered(prontoPage);
   await prontoPage.waitForNetworkIdle();

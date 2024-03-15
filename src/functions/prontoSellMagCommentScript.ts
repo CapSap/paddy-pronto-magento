@@ -57,7 +57,7 @@ export const prontoSellMagCommentScript = async () => {
   easyMagOrderLog(orderDetails);
 
   // try to run on 10 orders only
-  const smallArray = orderDetails.slice(0);
+  const smallArray = orderDetails.slice(1, 10);
 
   // console.log(smallArray);
 
@@ -67,7 +67,6 @@ export const prontoSellMagCommentScript = async () => {
     sellSingleOrder,
   );
 
-  console.log("all pronto selling for this batch completed successfully");
   // // 4b. Get the result of above and update magento. inputting in magento will throw an error if something wrong happens
 
   // clear the search filters once before runnign loop
