@@ -25,6 +25,10 @@ I also had a little trouble trying to run an async function, passing each elemen
 6. do nessessary magento steps
 7. done
 
+## Prerequisite software
+- node (using nvm is a good idea!)
+- git
+
 ## How to install and contribute
 
 1. pull the repo
