@@ -14,7 +14,6 @@ export const runAsyncFuncInSeries = async <T extends order, R>(
     }
   } catch (err) {
     console.log("problem selling somewhere");
-    console.log("list of batch", array);
     easyMagOrderLog(array);
     console.error(err);
   }
