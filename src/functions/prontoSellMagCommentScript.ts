@@ -57,7 +57,7 @@ export const prontoSellMagCommentScript = async () => {
   easyMagOrderLog(orderDetails);
 
   // try to run on 10 orders only
-  const smallArray = orderDetails.slice(1, 10);
+  const smallArray = orderDetails.slice(0, 10);
 
   // console.log(smallArray);
 
