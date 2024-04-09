@@ -49,6 +49,7 @@ I also had a little trouble trying to run an async function, passing each elemen
 
 2. Type `node build/scripts/runOnce.js` and press enter to run this command (you can use tab to autocomplete)
 3. Sit back and relax
+4. Any dramas report to charlie or submit an issue on github
 
 ### Sell in pronto, add receipt no into magento - Run once only
 
