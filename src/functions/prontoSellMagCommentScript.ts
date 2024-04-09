@@ -60,7 +60,7 @@ export const prontoSellMagCommentScript = async () => {
   const numberOfOrdersToSell = 10;
   const smallArray = orderDetails.slice(0, numberOfOrdersToSell);
 
-  console.log(`attempting to sell/process ${numberOfOrdersToSell} orders(s`);
+  console.log(`attempting to sell/process ${numberOfOrdersToSell} orders(s)`);
 
   // console.log(smallArray);
 
