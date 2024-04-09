@@ -7,6 +7,7 @@ export default async function loginIntoPronto(prontoPage: Page) {
   console.log("loginto pronto starting");
   // nav to pronto login screen and enter relevant deets
   await prontoPage.goto("https://pronto.paddypallin.com.au/");
+  await prontoPage.bringToFront();
   // sometimes page shows the verification page and the login fails. not sure why
   // below will try to find the login input element and return a rejected promise so that retry can run
   try {
