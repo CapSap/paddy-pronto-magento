@@ -26,6 +26,7 @@ I also had a little trouble trying to run an async function, passing each elemen
 7. done
 
 ## Prerequisite software
+
 - node (using nvm is a good idea!)
 - git
 
@@ -40,11 +41,20 @@ I also had a little trouble trying to run an async function, passing each elemen
 
 ## How to complete tasks
 
+### Detailed/Basic how to sell orders
+
+1. Ensure that the terminal is open in the project folder. Should look like this:
+
+![terminal](/readme-pics/terminal.png)
+
+2. Type `node build/scripts/runOnce.js` and press enter to run this command (you can use tab to autocomplete)
+3. Sit back and relax
+
 ### Sell in pronto, add receipt no into magento - Run once only
 
 1. run `npm run build`
 2. Ensure that you are connected to network and running VPN
-3. From the root folder run `node build/scripts/addReceiptsIntoMagento.js`
+3. From the root folder run `node build/scripts/runOnce.js`
 
 ### Sell in pronto, add receipt no into magento - Run on a schedule
 
