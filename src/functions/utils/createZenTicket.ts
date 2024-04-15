@@ -1,3 +1,11 @@
+import * as path from "path";
+import dotenv from "dotenv";
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+// dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+
+console.log(process.env.ZEN_USER);
+
 export default async function createZendeskTicket(
   requesterEmail: string,
   requesterName: string,
@@ -5,6 +13,8 @@ export default async function createZendeskTicket(
   subject: string,
   magentoOrderNo: string,
 ) {
+  console.log("zen tickets", process.env.ZEN_USER, process.env.ZEN_TOKEN);
+  return;
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -12,7 +22,11 @@ export default async function createZendeskTicket(
     `${process.env.ZEN_USER}/token:${process.env.ZEN_TOKEN}`,
   );
 
+  console.log("zen tickets", process.env.ZEN_USER, process.env.ZEN_TOKEN);
+
   myHeaders.append("Authorization", `Basic ${base64Encoded}`);
+
+  console.log("headers", myHeaders);
 
   const ticketPayload = {
     assignee_email: "customerservice@paddypallin.com.au",
@@ -21,11 +35,11 @@ export default async function createZendeskTicket(
     },
     subject: subject,
     tags: ["of_todo"],
-    requester: { name: requesterName, email: requesterEmail },
-    custom_fields: [{ id: "5986546802191", value: magentoOrderNo }],
+    // requester: { name: requesterName, email: requesterEmail },
+    // custom_fields: [{ id: "5986546802191", value: magentoOrderNo }],
   };
 
-  const raw = JSON.stringify({ tickets: ticketPayload });
+  const raw = JSON.stringify({ ticket: ticketPayload });
 
   console.log("tcket payload", ticketPayload);
 
@@ -37,16 +51,21 @@ export default async function createZendeskTicket(
   };
 
   try {
+    console.log("post request starting");
     return await fetch(
-      "https://paddypallin.zendesk.com/api/v2/tickets/create_many",
+      "https://paddypallin.zendesk.com/api/v2/tickets",
       requestOptions,
-    ).then((result) => {
-      return JSON.stringify({
-        message: "request sent to zendesk",
-        body: result,
-      });
-    });
+    ).then((result) =>
+      result.json().then((result) => {
+        console.log("res", result);
+        return JSON.stringify({
+          message: "request sent to zendesk",
+          body: result,
+        });
+      }),
+    );
   } catch (error) {
+    console.log("error", error);
     console.error("error with making post request to zendesk", error);
     return JSON.stringify({
       message: "there was an error making post request to zendesk",
