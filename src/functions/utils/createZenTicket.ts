@@ -29,8 +29,8 @@ export default async function createZendeskTicket(
     },
     subject: subject,
     tags: ["of_todo"],
-    // requester: { name: requesterName, email: requesterEmail },
-    // custom_fields: [{ id: "5986546802191", value: magentoOrderNo }],
+    requester: { name: requesterName, email: requesterEmail },
+    custom_fields: [{ id: "5986546802191", value: magentoOrderNo }],
   };
 
   const raw = JSON.stringify({ ticket: ticketPayload });
