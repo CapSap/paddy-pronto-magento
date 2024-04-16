@@ -13,8 +13,6 @@ export default async function createZendeskTicket(
   subject: string,
   magentoOrderNo: string,
 ) {
-  console.log("zen tickets", process.env.ZEN_USER, process.env.ZEN_TOKEN);
-  return;
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -22,11 +20,7 @@ export default async function createZendeskTicket(
     `${process.env.ZEN_USER}/token:${process.env.ZEN_TOKEN}`,
   );
 
-  console.log("zen tickets", process.env.ZEN_USER, process.env.ZEN_TOKEN);
-
   myHeaders.append("Authorization", `Basic ${base64Encoded}`);
-
-  console.log("headers", myHeaders);
 
   const ticketPayload = {
     assignee_email: "customerservice@paddypallin.com.au",
@@ -51,13 +45,11 @@ export default async function createZendeskTicket(
   };
 
   try {
-    console.log("post request starting");
     return await fetch(
       "https://paddypallin.zendesk.com/api/v2/tickets",
       requestOptions,
     ).then((result) =>
       result.json().then((result) => {
-        console.log("res", result);
         return JSON.stringify({
           message: "request sent to zendesk",
           body: result,
@@ -65,7 +57,6 @@ export default async function createZendeskTicket(
       }),
     );
   } catch (error) {
-    console.log("error", error);
     console.error("error with making post request to zendesk", error);
     return JSON.stringify({
       message: "there was an error making post request to zendesk",
