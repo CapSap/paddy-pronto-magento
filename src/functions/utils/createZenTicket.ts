@@ -6,13 +6,19 @@ dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
 console.log(process.env.ZEN_USER);
 
-export default async function createZendeskTicket(
-  requesterEmail: string,
-  requesterName: string,
-  body: string,
-  subject: string,
-  magentoOrderNo: string,
-) {
+export default async function createZendeskTicket({
+  requesterEmail,
+  requesterName,
+  body,
+  subject,
+  magentoOrderNo,
+}: {
+  requesterEmail?: string;
+  requesterName?: string;
+  body: string;
+  subject: string;
+  magentoOrderNo: string;
+}) {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 

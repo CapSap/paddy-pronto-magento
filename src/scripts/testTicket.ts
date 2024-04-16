@@ -9,12 +9,13 @@ with a line break
 
 (async () => {
   console.log(
-    await createZendeskTicket(
-      "cshotam@gmail.com",
-      "billy bob",
-      body,
-      "test ticket",
-      "99",
-    ),
+    await createZendeskTicket({
+      // requesterEmail: undefined,
+      // requesterEmail: "cshotam@gmail.com",
+      requesterName: "billy bob",
+      body: body,
+      subject: "test ticket",
+      magentoOrderNo: "99",
+    }),
   );
 })();
