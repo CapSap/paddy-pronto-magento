@@ -109,7 +109,7 @@ export default async function inputProntoReceiptIntoMagento(
   await magentoPage.waitForSelector("ul.note-list");
 
   const customerDetails = await magentoPage.$eval(
-    "#sales_order_view_tabs_order_info_content > section.admin__page-section.order-view-account-information > div.admin__page-section-content > div.admin__page-section-item.order-account-information > div.admin__page-section-item-content > table",
+    "table.admin__table-secondary.order-account-information-table",
     (el) => console.log(el),
   );
   console.log("customer details", customerDetails);
@@ -119,6 +119,8 @@ export default async function inputProntoReceiptIntoMagento(
       console.log(comment.innerText);
       // check comments for text cws not found, and if found raise a ticket
       if (comment.innerText.includes("CWS")) {
+        console.log("raising a ticket");
+
         const body = `Hi CS,
         During the selling process this magento order no ${order.magentoOrder} has a e-gift card that failed to generate (CWS not found)
         There is a chance that the issue as been looked at already / raised seperately / so please check if the customer is sorted already 
