@@ -2,6 +2,7 @@ import { Page } from "puppeteer";
 import { orderWithMagCommentResult, orderWithSellResult } from "../types.js";
 import { saveContent } from "./utils/saveContent.js";
 import { waitTillHTMLRendered } from "./utils/waitTillHTMLRendered.js";
+import createZendeskTicket from "./utils/createZenTicket.js";
 export default async function inputProntoReceiptIntoMagento(
   order: orderWithSellResult,
   magentoPage: Page,
@@ -106,9 +107,42 @@ export default async function inputProntoReceiptIntoMagento(
 
   await waitTillHTMLRendered(magentoPage);
   await magentoPage.waitForSelector("ul.note-list");
+
+  const customerDetails = await magentoPage.$eval(
+    "table.admin__table-secondary.order-account-information-table",
+    (el) => console.log(el),
+  );
+  console.log("customer details", customerDetails);
+
   const comments = await magentoPage.$$eval("div.note-list-comment", (el) => {
     return el.map((comment) => {
       console.log(comment.innerText);
+      // check comments for text cws not found, and if found raise a ticket
+      if (comment.innerText.includes("CWS")) {
+        console.log("raising a ticket");
+
+        const body = `Hi CS,
+        During the selling process this magento order no ${order.magentoOrder} has a e-gift card that failed to generate (CWS not found)
+        There is a chance that the issue as been looked at already / raised seperately / so please check if the customer is sorted already 
+
+        If not, Could you please reach out to the customer and ask for 
+        1. Receipent Email
+        2. Receiptent name 
+        3. message
+
+        Thanks - Charlie via node`;
+
+        const subject = "TEST ticket";
+        // get the customer and order details
+        // ive got the order number
+        // get customer email, name,
+        createZendeskTicket({
+          subject: subject,
+          body: body,
+          magentoOrderNo: order.magentoOrder,
+        });
+      }
+
       return comment.innerText;
     });
   });
