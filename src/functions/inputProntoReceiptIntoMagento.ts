@@ -108,11 +108,15 @@ export default async function inputProntoReceiptIntoMagento(
   await waitTillHTMLRendered(magentoPage);
   await magentoPage.waitForSelector("ul.note-list");
 
-  const customerDetails = await magentoPage.$eval(
-    "table.admin__table-secondary.order-account-information-table",
-    (el) => console.log(el),
-  );
+  const customerDetails = await magentoPage.$eval("table", (el) => {
+    console.log(el);
+    return el;
+  });
   console.log("customer details", customerDetails);
+
+  const custDee = await magentoPage.$("table");
+
+  console.log("custdee", custDee);
 
   const comments = await magentoPage.$$eval("div.note-list-comment", (el) => {
     return el.map((comment) => {
@@ -122,7 +126,7 @@ export default async function inputProntoReceiptIntoMagento(
         console.log("raising a ticket");
 
         const body = `Hi CS,
-        During the selling process this magento order no ${order.magentoOrder} has a e-gift card that failed to generate (CWS not found)
+        During the selling process this magento order no ${magOrderNumberFromPage} has a e-gift card that failed to generate (CWS not found)
         There is a chance that the issue as been looked at already / raised seperately / so please check if the customer is sorted already 
 
         If not, Could you please reach out to the customer and ask for 
@@ -136,10 +140,11 @@ export default async function inputProntoReceiptIntoMagento(
         // get the customer and order details
         // ive got the order number
         // get customer email, name,
+        return;
         createZendeskTicket({
           subject: subject,
           body: body,
-          magentoOrderNo: order.magentoOrder,
+          magentoOrderNo: magOrderNumberFromPage,
         });
       }
 

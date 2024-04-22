@@ -4,6 +4,7 @@ import { orderWithSellResult } from "../types.js";
 import { retry } from "../functions/utils/retry.js";
 import loginIntoMagento from "../functions/loginIntoMagento.js";
 import loginIntoPronto from "../functions/loginIntoPronto.js";
+import { enableLogging } from "../functions/utils/enableLogging.js";
 
 async function main() {
   const order: orderWithSellResult = {
@@ -22,7 +23,7 @@ async function main() {
   await magentoPage.setViewport({ width: 1920, height: 1080 });
 
   // enableLogging(prontoPage);
-  // enableLogging(magentoPage);
+  enableLogging(magentoPage);
 
   // 1. Login into pronto and magento. Retry login 2 times with 2 second interval if 1st does not work
   await Promise.all([
