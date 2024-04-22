@@ -31,10 +31,12 @@ async function main() {
       retries: 2,
       retryInterval: 2000,
     }),
+    /* 
     retry(() => loginIntoPronto(prontoPage), {
       retries: 2,
       retryInterval: 2000,
     }),
+    */
   ]);
   await inputProntoReceiptIntoMagento(order, magentoPage);
 }
