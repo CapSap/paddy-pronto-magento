@@ -4,8 +4,6 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 // dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
-console.log(process.env.ZEN_USER);
-
 export default async function createZendeskTicket({
   requesterEmail,
   requesterName,
