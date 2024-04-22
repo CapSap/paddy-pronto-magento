@@ -1,5 +1,15 @@
 # Automating pronto selling and putting comment in magento
 
+## A short list of commands
+
+`npm run build` - this will re-build the script files after you have made changes
+
+`npm run once` - this will run the selling script once
+
+`npm run scheduler` - this will run the selling script once every 30 mins
+
+`node build/scripts/scheduler/scheduler.js XX` - this will run the selling script every XX number of minutes
+
 ## Goal
 
 Overall goal is to automate a tedious admin process that invovles 2 seperate systems that are linked only by a human process. About 1-2 mins of human time will be saved per order
@@ -25,7 +35,7 @@ I also had a little trouble trying to run an async function, passing each elemen
 6. do nessessary magento steps
 7. done
 
-## Prerequisite software
+## Prerequisite software required to run script
 
 - node (using nvm is a good idea!)
 - git
@@ -34,28 +44,23 @@ I also had a little trouble trying to run an async function, passing each elemen
 
 1. pull the repo
 2. run `npm install`
-3. you will need to create a .env file with all relevant credentials. See the template file for what info you will need
+3. you will need to create a .env file with all relevant credentials.
 4. run `npm run build` this will run the tsc (typescript compiler) on all files in src.
 5. If you would like to make changes, run `npm run dev`. This will run the compiler and watch for changes
 6. run `npm run once` to see the script in action
 
-## How to complete tasks
+## How to complete tasks (detailed instructions)
 
-### Detailed/Basic how to sell orders
+### How to sell orders (Sell in pronto, add receipt no into magento)
 
 1. Ensure that the terminal is open in the project folder. Should look like this:
 
-![terminal](/readme-pics/terminal.png)
+![terminal](/readme-pics/terminal2.png)
 
-2. Type `node build/scripts/runOnce.js` and press enter to run this command (you can use tab to autocomplete)
-3. Sit back and relax
-4. Any dramas report to charlie or submit an issue on github
-
-### Sell in pronto, add receipt no into magento - Run once only
-
-1. run `npm run build`
-2. Ensure that you are connected to network and running VPN
-3. From the root folder run `node build/scripts/runOnce.js`
+2. Also ensure that you are connected to the paddy vpn network (browser needs access to magento)
+3. Type `node build/scripts/runOnce.js` or `node run once` and press enter to run this command (you can use tab to autocomplete)
+4. Sit back and relax
+5. Any dramas report to charlie or submit an issue on github
 
 ### Sell in pronto, add receipt no into magento - Run on a schedule
 
