@@ -101,31 +101,47 @@ export default async function inputProntoReceiptIntoMagento(
     `${order.prontoReceipt} - ${order.result}`,
   );
   // submit the comment
-  await magentoPage.click('button[title="Submit Comment"]');
+  // await magentoPage.click('button[title="Submit Comment"]');
   // check if comment was sent successfully
   await magentoPage.waitForSelector("div.loading-mask", { hidden: true });
 
   await waitTillHTMLRendered(magentoPage);
   await magentoPage.waitForSelector("ul.note-list");
 
-  const customerDetails = await magentoPage.$eval("table", (el) => {
-    console.log(el);
-    return el;
-  });
-  console.log("customer details", customerDetails);
+  // save customer name and email locally
+  const customerDetails = await magentoPage.$$eval(
+    "table.admin__table-secondary.order-account-information-table tbody tr",
+    (rows) => {
+      const data = {
+        customerName: "",
+        email: "",
+      };
+      if (rows.length >= 2) {
+        const customerNameElement = rows[0].querySelector("td") as HTMLElement;
+        const emailElement = rows[1].querySelector("td a") as HTMLElement;
 
-  const custDee = await magentoPage.$("table");
+        const customerName = customerNameElement.innerText.trim();
+        const email = emailElement.innerText.trim();
 
-  console.log("custdee", custDee);
+        data.customerName = customerName;
+        data.email = email;
+      }
+      return data; // Return the extracted data
+    },
+  );
 
-  const comments = await magentoPage.$$eval("div.note-list-comment", (el) => {
-    return el.map((comment) => {
-      console.log(comment.innerText);
-      // check comments for text cws not found, and if found raise a ticket
-      if (comment.innerText.includes("CWS")) {
-        console.log("raising a ticket");
+  //check comments for cws not found.
+  // maybe there is a better way to get all the text in all of the comments?
+  // parent el.innerText ?
 
-        const body = `Hi CS,
+  const comments = await magentoPage.$$eval(
+    "div.note-list-comment",
+    (el, customerDetails, magOrderNumberFromPage) => {
+      return el.map((comment) => {
+        console.log(comment.innerText);
+        // check comments for text cws not found, and if found raise a ticket
+        if (comment.innerText.includes("CWS")) {
+          const body = `Hi CS,
         During the selling process this magento order no ${magOrderNumberFromPage} has a e-gift card that failed to generate (CWS not found)
         There is a chance that the issue as been looked at already / raised seperately / so please check if the customer is sorted already 
 
@@ -136,21 +152,24 @@ export default async function inputProntoReceiptIntoMagento(
 
         Thanks - Charlie via node`;
 
-        const subject = "TEST ticket";
-        // get the customer and order details
-        // ive got the order number
-        // get customer email, name,
-        return;
-        createZendeskTicket({
-          subject: subject,
-          body: body,
-          magentoOrderNo: magOrderNumberFromPage,
-        });
-      }
+          const subject = "TEST ticket";
+          // get the customer and order details
+          // ive got the order number
+          // get customer email, name,
+          return;
+          createZendeskTicket({
+            subject: subject,
+            body: body,
+            magentoOrderNo: magOrderNumberFromPage,
+          });
+        }
 
-      return comment.innerText;
-    });
-  });
+        return comment.innerText;
+      });
+    },
+    customerDetails,
+    magOrderNumberFromPage,
+  );
 
   console.log(JSON.stringify(comments));
 
