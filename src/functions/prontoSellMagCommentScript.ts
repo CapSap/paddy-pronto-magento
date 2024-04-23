@@ -17,7 +17,7 @@ export const prontoSellMagCommentScript = async () => {
   // FUNCTION CALLS
 
   // 0. Launch the browser and open 2 new blank pages
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: true });
   const magentoPage = await browser.newPage();
   const prontoPage = await browser.newPage();
 
