@@ -1,6 +1,6 @@
 # Automating pronto selling and putting comment in magento
 
-## A short list of commands
+## A list of commands (cheatsheet)
 
 `npm run build` - this will re-build the script files after you have made changes
 
@@ -93,7 +93,7 @@ I also had a little trouble trying to run an async function, passing each elemen
 ## What's next?
 
 - [x] Run the script every 30 mins or so using some sort of scheduler (could this be a simple while loop?)
-- [ ] Check for CWS not found`
+- [x] Check for CWS not found`
 - [ ] Check for orders that have not appeared in pronto
 - [ ] Handleing of errors that I have not come accross yet
 - [ ] e.g. network errors at specific points
