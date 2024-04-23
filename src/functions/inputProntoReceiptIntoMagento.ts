@@ -162,8 +162,7 @@ export default async function inputProntoReceiptIntoMagento(
       subject: subject,
       body: body,
       magentoOrderNo: magOrderNumberFromPage,
-      requesterEmail: "cshotam@gmail.com",
-      // requesterEmail: customerDetails.email,
+      requesterEmail: customerDetails.email,
       requesterName: customerDetails.customerName,
     });
 
