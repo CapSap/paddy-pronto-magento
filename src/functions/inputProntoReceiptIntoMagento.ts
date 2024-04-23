@@ -170,8 +170,6 @@ export default async function inputProntoReceiptIntoMagento(
     console.log(zendeskResult);
   }
 
-  console.log("moving on");
-
   if (!JSON.stringify(comments).includes(order.prontoReceipt)) {
     console.log("did not find order comment ");
     return Promise.reject(
