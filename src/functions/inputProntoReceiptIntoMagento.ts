@@ -108,49 +108,67 @@ export default async function inputProntoReceiptIntoMagento(
   await waitTillHTMLRendered(magentoPage);
   await magentoPage.waitForSelector("ul.note-list");
 
-  const customerDetails = await magentoPage.$eval(
-    "table.admin__table-secondary.order-account-information-table",
-    (el) => console.log(el),
-  );
-  console.log("customer details", customerDetails);
+  // save customer name and email locally
+  const customerDetails = await magentoPage.$$eval(
+    "table.admin__table-secondary.order-account-information-table tbody tr",
+    (rows) => {
+      const data = {
+        customerName: "",
+        email: "",
+      };
+      if (rows.length >= 2) {
+        const customerNameElement = rows[0].querySelector("td") as HTMLElement;
+        const emailElement = rows[1].querySelector("td a") as HTMLElement;
 
-  const comments = await magentoPage.$$eval("div.note-list-comment", (el) => {
-    return el.map((comment) => {
-      console.log(comment.innerText);
-      // check comments for text cws not found, and if found raise a ticket
-      if (comment.innerText.includes("CWS")) {
-        console.log("raising a ticket");
+        const customerName = customerNameElement.innerText.trim();
+        const email = emailElement.innerText.trim();
 
-        const body = `Hi CS,
-        During the selling process this magento order no ${order.magentoOrder} has a e-gift card that failed to generate (CWS not found)
-        There is a chance that the issue as been looked at already / raised seperately / so please check if the customer is sorted already 
-
-        If not, Could you please reach out to the customer and ask for 
-        1. Receipent Email
-        2. Receiptent name 
-        3. message
-
-        Thanks - Charlie via node`;
-
-        const subject = "TEST ticket";
-        // get the customer and order details
-        // ive got the order number
-        // get customer email, name,
-        createZendeskTicket({
-          subject: subject,
-          body: body,
-          magentoOrderNo: order.magentoOrder,
-        });
+        data.customerName = customerName;
+        data.email = email;
       }
+      return data;
+    },
+  );
 
-      return comment.innerText;
-    });
+  // get all comments
+  const comments = await magentoPage.$$eval("div.note-list-comment", (el) => {
+    return el.map((comment) => comment.innerText);
+  });
+  // get all comments with CWS
+  const filtered = comments.filter((comment) => comment.includes("CWS"));
+
+  const commentsWithLineBreak = comments.map((comment) => {
+    return comment + "\n";
   });
 
-  console.log(JSON.stringify(comments));
+  //  if there is a comment with CWS, then create a ticket
+  if (filtered.length > 0) {
+    const body = `Hi CS,
+  During the selling process this magento order no ${magOrderNumberFromPage} has a e-gift card that failed to generate (CWS not found)
+  There is a chance that the issue as been looked at already / raised seperately / so please check if the customer is sorted already 
 
-  //what should this function return? how should we handle errors / make user aware of erros?
-  // e.g. network drops out during selling.
+  If not, Could you please reach out to the customer and ask for the following details so that we can create a new e-gift card.  
+  1. Receipent Email
+  2. Receiptent name 
+  3. message
+
+
+  PS here is the full comments from the mag order: ${commentsWithLineBreak}
+
+  Cheers- Charlie via node`;
+
+    const subject = "E-Gift card failed to generate";
+    const zendeskResult = await createZendeskTicket({
+      subject: subject,
+      body: body,
+      magentoOrderNo: magOrderNumberFromPage,
+      requesterEmail: "cshotam@gmail.com",
+      // requesterEmail: customerDetails.email,
+      requesterName: customerDetails.customerName,
+    });
+
+    console.log(zendeskResult);
+  }
 
   if (!JSON.stringify(comments).includes(order.prontoReceipt)) {
     console.log("did not find order comment ");
