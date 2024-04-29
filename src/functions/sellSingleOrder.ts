@@ -58,6 +58,9 @@ export default async function sellSingleOrder(
   await waitTillHTMLRendered(prontoPage);
   await pressEnterManyTimes(prontoPage, 2);
 
+  await prontoPage.waitForNetworkIdle();
+  await waitTillHTMLRendered(prontoPage);
+
   // select external-email as the printer
   const externalEmail = await prontoPage.waitForSelector(
     `::-p-text("external-email")`,
