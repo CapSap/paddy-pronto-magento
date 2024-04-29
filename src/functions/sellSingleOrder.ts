@@ -10,13 +10,14 @@ export default async function sellSingleOrder(
 ): Promise<orderWithSellResult> {
   // select td with correct mag order number
   console.log("pronto sell attempt running on", order);
+
+  await waitTillHTMLRendered(prontoPage);
   const magOrder = await prontoPage.waitForSelector(
     `::-p-text("${order.magentoOrder}")`,
   );
   if (!magOrder) {
     throw new Error("could not find order");
   }
-
   await waitTillHTMLRendered(prontoPage);
   await magOrder.click();
 
