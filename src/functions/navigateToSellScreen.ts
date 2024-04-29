@@ -1,5 +1,6 @@
 import { Page } from "puppeteer";
 import { pressEnterManyTimes } from "./utils/pressEnterManyTimes.js";
+import { waitTillHTMLRendered } from "./utils/waitTillHTMLRendered.js";
 
 export default async function navigateToSellScreen(prontoPage: Page) {
   console.log("nav to sell screen fun running");
@@ -31,4 +32,6 @@ export default async function navigateToSellScreen(prontoPage: Page) {
   await prontoPage.keyboard.type("30");
   await pressEnterManyTimes(prontoPage, 8);
   await prontoPage.waitForSelector("td.data-tbody");
+  await prontoPage.waitForNetworkIdle();
+  await waitTillHTMLRendered(prontoPage);
 }
