@@ -28,6 +28,8 @@ export default async function loginIntoPronto(prontoPage: Page) {
     process.env.PRONTO_PASSWORD as string,
   );
   const prontoLoginButton = "#login-button";
+  await prontoPage.bringToFront();
+
   await prontoPage.waitForSelector(prontoLoginButton);
   await prontoPage.click(prontoLoginButton);
   // enter 2 factor and login
@@ -35,6 +37,7 @@ export default async function loginIntoPronto(prontoPage: Page) {
   await prontoPage.type("input#prompts", otp);
   const prontoLoginButtonFinal = "#login-button";
   await prontoPage.waitForSelector(prontoLoginButtonFinal);
+  await prontoPage.bringToFront();
   await prontoPage.click(prontoLoginButtonFinal);
 
   // return a promise based upon did login succeed and throw if login failed

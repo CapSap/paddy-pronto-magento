@@ -16,7 +16,10 @@ export default async function loginIntoMagento(magentoPage: Page) {
     process.env.MAGENTO_USERNAME as string,
   );
   await magentoPage.type("input#login", process.env.MAGENTO_PASSWORD as string);
+  await magentoPage.bringToFront();
   await magentoPage.click("button.action-login");
+  await magentoPage.waitForNavigation();
+  await magentoPage.bringToFront();
 
   // i need to check if login worked and return a promise. same as pronto login
 
