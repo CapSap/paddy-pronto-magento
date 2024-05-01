@@ -67,6 +67,14 @@ export const prontoSellMagCommentScript = async () => {
     sellSingleOrder,
   );
 
+  const status70Orders = orderDetailsAfterProntoSelling.filter((order) =>
+    order.result.includes("70"),
+  );
+
+  if (status70Orders) {
+    console.log("these orders may still be at status 70: ", status70Orders);
+  }
+
   // // 4b. Get the result of above and update magento. inputting in magento will throw an error if something wrong happens
 
   // clear the search filters once before runnign loop
