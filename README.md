@@ -6,6 +6,8 @@
 
 `npm run once` - this will run the selling script once
 
+`npm run skip` - this will run the selling script once and skip the first order (due to credit limit)
+
 `npm run scheduler` - this will run the selling script once every 30 mins
 
 `node build/scripts/scheduler/scheduler.js XX` - this will run the selling script every XX number of minutes
