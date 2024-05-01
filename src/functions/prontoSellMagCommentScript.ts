@@ -13,7 +13,9 @@ import { getOrders } from "./utils/getOrders.js";
 import { runAsyncFuncInSeries } from "./utils/runAsyncFuncInSeries.js";
 import { easyMagOrderLog } from "./utils/easMagOrderLog.js";
 
-export const prontoSellMagCommentScript = async () => {
+export const prontoSellMagCommentScript = async (
+  indexToStartSellingFrom = 0,
+) => {
   // FUNCTION CALLS
 
   // 0. Launch the browser and open 2 new blank pages
@@ -55,7 +57,10 @@ export const prontoSellMagCommentScript = async () => {
 
   // try to run on 10 orders only
   const numberOfOrdersToSell = 10;
-  const smallArray = orderDetails.slice(0, numberOfOrdersToSell);
+  const smallArray = orderDetails.slice(
+    indexToStartSellingFrom,
+    numberOfOrdersToSell,
+  );
 
   console.log(`attempting to sell/process ${numberOfOrdersToSell} orders(s)`);
 
