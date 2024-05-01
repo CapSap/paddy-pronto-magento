@@ -42,7 +42,9 @@ export default async function loginIntoPronto(prontoPage: Page) {
 
   // return a promise based upon did login succeed and throw if login failed
   try {
-    await prontoPage.waitForSelector("button.folder[name='Sales &Orders']");
+    await prontoPage.waitForSelector("button.folder[name='Sales &Orders']", {
+      timeout: 10000,
+    });
   } catch (err) {
     console.error(err);
     return Promise.reject("did not login into pronto");
