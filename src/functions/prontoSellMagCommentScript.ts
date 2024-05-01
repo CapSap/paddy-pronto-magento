@@ -76,7 +76,7 @@ export const prontoSellMagCommentScript = async (
     order.result.includes("70"),
   );
 
-  if (status70Orders) {
+  if (status70Orders.length > 0) {
     console.log("these orders may still be at status 70: ", status70Orders);
   }
 
