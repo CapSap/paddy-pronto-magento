@@ -30,7 +30,11 @@ export default async function navigateToSellScreen(prontoPage: Page) {
 
   await pressEnterManyTimes(prontoPage, 4);
   await prontoPage.keyboard.type("30");
-  await pressEnterManyTimes(prontoPage, 8);
+
+  await pressEnterManyTimes(prontoPage, 1);
+
+  await prontoPage.keyboard.type("70");
+  await pressEnterManyTimes(prontoPage, 7);
   await prontoPage.waitForSelector("td.data-tbody");
   await prontoPage.waitForNetworkIdle();
   await waitTillHTMLRendered(prontoPage);
