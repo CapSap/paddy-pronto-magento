@@ -10,13 +10,14 @@ export default async function sellSingleOrder(
 ): Promise<orderWithSellResult> {
   // select td with correct mag order number
   console.log("pronto sell attempt running on", order);
+
+  await waitTillHTMLRendered(prontoPage);
   const magOrder = await prontoPage.waitForSelector(
     `::-p-text("${order.magentoOrder}")`,
   );
   if (!magOrder) {
     throw new Error("could not find order");
   }
-
   await waitTillHTMLRendered(prontoPage);
   await magOrder.click();
 
@@ -82,7 +83,7 @@ export default async function sellSingleOrder(
     return {
       ...order,
       result:
-        "failed to sell automatically. problem somewhere in pronto. order may still be at status 70 -cm",
+        "failed to sell automatically during running of node script. problem somewhere in pronto. order may still be at status 70 -cm PS: this is an automated message from node script",
     };
   }
 

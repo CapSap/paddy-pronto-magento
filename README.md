@@ -6,6 +6,8 @@
 
 `npm run once` - this will run the selling script once
 
+`npm run skip` - this will run the selling script once and skip the first order (due to credit limit)
+
 `npm run scheduler` - this will run the selling script once every 30 mins
 
 `node build/scripts/scheduler/scheduler.js XX` - this will run the selling script every XX number of minutes
@@ -58,9 +60,10 @@ I also had a little trouble trying to run an async function, passing each elemen
 ![terminal](/readme-pics/terminal2.png)
 
 2. Also ensure that you are connected to the paddy vpn network (browser needs access to magento)
-3. Type `node build/scripts/runOnce.js` or `node run once` and press enter to run this command (you can use tab to autocomplete)
+3. Type `node build/scripts/runOnce.js` or `npm run once` and press enter to run this command (you can use tab to autocomplete)
 4. Sit back and relax
 5. Any dramas report to charlie or submit an issue on github
+6. If you do encouter a credit limit issue, you can run `npm run skip`
 
 ### Sell in pronto, add receipt no into magento - Run on a schedule
 
