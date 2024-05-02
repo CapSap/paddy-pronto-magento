@@ -38,4 +38,10 @@ export default async function navigateToSellScreen(prontoPage: Page) {
   await prontoPage.waitForSelector("td.data-tbody");
   await prontoPage.waitForNetworkIdle();
   await waitTillHTMLRendered(prontoPage);
+
+  const upHome = "button#up-home";
+  await prontoPage.waitForSelector(upHome);
+  await prontoPage.click(upHome);
+  await prontoPage.waitForNetworkIdle();
+  await waitTillHTMLRendered(prontoPage);
 }
