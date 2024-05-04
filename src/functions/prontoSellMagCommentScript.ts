@@ -99,7 +99,5 @@ export const prontoSellMagCommentScript = async (
 
   console.log("browser close about to run");
   await browser.close();
-  // just for fun
-  await waitAndDisplayNeo(4);
   console.log("selling complete");
 };
