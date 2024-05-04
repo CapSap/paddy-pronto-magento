@@ -9,7 +9,8 @@
     "build": "rm screenshots/*; rm -r build; tsc ",
     "scheduler": "node build/scripts/scheduler.js",
     "once": "node build/scripts/runOnce.js",
-    "skip": "node build/scripts/runOnceSkipFirst.js"
+    "skip": "node build/scripts/runOnceSkipFirst.js",
+    "many": "node build/scripts/run100.js"
   },
   "author": "",
   "license": "ISC",
