@@ -4,7 +4,9 @@
 
 `npm run build` - this will re-build the script files after you have made changes
 
-`npm run once` - this will run the selling script once
+`npm run once` - this will run the selling script once (selll 10 orders)
+
+`npm run many` - this will run the selling script 10 times (sell 100 orders)
 
 `npm run skip` - this will run the selling script once and skip the first order (due to credit limit)
 
