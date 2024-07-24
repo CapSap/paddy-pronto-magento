@@ -25,7 +25,7 @@ Overall goal is to automate a tedious admin process that invovles 2 seperate sys
 
 A big challenge were the intermittant failings, and pupateer's waitForNetworkIdle() and waitForNavigation() were not enough to ensure that the DOM was fully loaded.
 
-I also had a little trouble trying to run an async function, passing each element in an array. AND this function must run synchronously ie in series. (fun bug discovered here). I think I'd like to refactor and use a .reduce but I had some trouble with typesript. I'm still having trouble with typescript, and I don't like that I'm avoiding using reduce.
+I also had a little trouble trying to run an async function, passing each element in an array. AND this function must run synchronously ie in series. (fun bug discovered here). I think I'd like to refactor and use an Array.reduce but I had some trouble with typescript. I'm still having trouble with typescript, and I don't like that I'm avoiding using reduce.
 
 ### Imagined workflow
 
