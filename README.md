@@ -41,6 +41,7 @@ I also had a little trouble trying to run an async function, passing each elemen
 
 - node (using nvm is a good idea!)
 - git
+- .env file
 
 ## How to install and contribute
 
