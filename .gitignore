@@ -9,3 +9,6 @@ coverage/
 build
 screenshots
 useful-screenshots
+
+*.csv
+s
