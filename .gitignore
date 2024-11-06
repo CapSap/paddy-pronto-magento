@@ -11,4 +11,4 @@ screenshots
 useful-screenshots
 
 *.csv
-s
+*/temp/** 
